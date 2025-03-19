@@ -1,0 +1,38 @@
+{
+    "version": 5,
+    "cmakeMinimumRequired": {
+      "major": 3,
+      "minor": 24,
+      "patch": 0
+    },
+    "configurePresets": [
+      {
+        "name": "Ninja",
+        "description": "Global config preset - base",
+        "generator": "Ninja Multi-Config",
+        "binaryDir": "${sourceDir}/build/",
+        "installDir": "${sourceDir}/build/",
+        "cacheVariables": {
+            "CMAKE_TOOLCHAIN_FILE": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake",
+            "VCPKG_OVERLAY_PORTS": "${sourceDir}/custom-overlay/cpp-jsonlib",
+            "CMAKE_CONFIGURATION_TYPES": "Debug",
+            "CMAKE_MAKE_PROGRAM": "E:/Ninja/ninja.exe",
+            "VCPKG_MANIFEST_MODE": "ON",
+            "CMAKE_CXX_COMPILER": "cl.exe"
+          },
+        "architecture": {
+            "value": "x64",
+            "strategy": "external"
+        }
+      }
+    ],
+    "buildPresets": [
+        {
+        "name": "build-debug",
+        "displayName": "Build Debug",
+        "configurePreset": "Ninja",
+        "configuration": "Debug"
+        }
+    ]
+}
+  
