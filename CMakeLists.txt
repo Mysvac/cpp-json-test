@@ -25,6 +25,8 @@ target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/i
 
 target_link_libraries(${PROJECT_NAME} PRIVATE jsonlib::jsonlib)
 
+target_compile_definitions(${PROJECT_NAME} PRIVATE PROJECT_DIR_PATH="${CMAKE_CURRENT_SOURCE_DIR}/result")
+
 
 
 add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD

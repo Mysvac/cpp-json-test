@@ -10,11 +10,37 @@
 class JsonCounter{
 public:
     size_t objectNum {0};
+    size_t objectChildNum { 0 };
     size_t arrayNum {0};
+    size_t arrayChildNum { 0 };
     size_t stringNum {0};
     size_t numberNum {0};
     size_t boolenNum {0};
     size_t nullNum {0};
+
+    inline bool operator==(const JsonCounter& jsonCounter){
+        return objectNum == jsonCounter.objectNum && 
+            objectChildNum == jsonCounter.objectChildNum &&
+            arrayNum == jsonCounter.arrayNum &&
+            arrayChildNum == jsonCounter.arrayChildNum &&
+            stringNum == jsonCounter.stringNum &&
+            numberNum == jsonCounter.numberNum &&
+            boolenNum == jsonCounter.boolenNum &&
+            nullNum == jsonCounter.nullNum;
+    }
+
+    inline std::string value(){
+        std::string str;
+        str += "objectNum :" + std::to_string(objectNum);
+        str += "\nobjectChildNum :" + std::to_string(objectChildNum);
+        str += "\narrayNum :" + std::to_string(arrayNum);
+        str += "\narrayChildNum :" + std::to_string(arrayChildNum);
+        str += "\nstringNum :" + std::to_string(stringNum);
+        str += "\nnumberNum :" + std::to_string(numberNum);
+        str += "\nboolenNum :" + std::to_string(boolenNum);
+        str += "\nnullNum :" + std::to_string(nullNum) + "\n";
+        return std::move(str);
+    }
 };
 
 // 库不支持的操作，请直接抛出此异常
@@ -69,7 +95,7 @@ public:
     virtual void delete_child_from_object(std::shared_ptr<JsonBase> jsonBase, const std::string& key) = 0;
 
     // 数组类型删除内容
-    virtual void delete_child_from_object(std::shared_ptr<JsonBase> jsonBase, const size_t& index) = 0;
+    virtual void delete_child_from_array(std::shared_ptr<JsonBase> jsonBase, const size_t& index) = 0;
 
     // 对象类型获取内容
     virtual std::shared_ptr<JsonBase> get_child_from_object(std::shared_ptr<JsonBase> jsonBase, const std::string & str) = 0;
