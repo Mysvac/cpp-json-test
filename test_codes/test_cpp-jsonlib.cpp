@@ -59,6 +59,13 @@ class CppJsonlibTest : public TestBase{
     }
 
     JsonCounter count_element(std::shared_ptr<JsonBase> jsonBase) override{
+        JsonCounter counter;
+        try{
+            auto json_ptr = std::dynamic_pointer_cast<CppJsonlibObj>(jsonBase);
+            get_element_num(json_ptr->jsonBasic, counter);
+        }catch(...){
+            return JsonCounter{};
+        }
         return JsonCounter{};
     }
 
@@ -161,7 +168,7 @@ class CppJsonlibTest : public TestBase{
         }catch(...){ 
             throw FailException {}; 
         }
-        return 0;
+        return "";
     }
 
     bool value_is_null(std::shared_ptr<JsonBase> jsonBase) override{
@@ -176,4 +183,38 @@ class CppJsonlibTest : public TestBase{
 
 };
 
+// 4. 编写函数，用于完备性测试，递归地获取内部各种元素的数量
+void get_element_num(const Json::JsonBasic& jsonBasic, JsonCounter& counter){
+    switch (jsonBasic.type())
+    {
+    case Json::JsonType::OBJECT:
+        const Json::JsonBasic::Map& map = jsonBasic.getMapConst();
+        for(const auto& it : map){
+            get_element_num(it.second, counter);
+        }
+       counter.objectNum += 1;
+        break;
+    case Json::JsonType::ARRAY:
+        const Json::JsonBasic::List& list = jsonBasic.getListConst();
+        for(const auto& it : list){
+            get_element_num(it, counter);
+        }
+       counter.arrayNum += 1;
+        break;
+    case Json::JsonType::STRING:
+       counter.stringNum += 1;
+        break;
+    case Json::JsonType::NUMBER:
+        counter.numberNum += 1;
+        break;
+    case Json::JsonType::BOOLEN:
+        counter.boolenNum += 1;
+        break;
+    case Json::JsonType::ISNULL:
+        counter.nullNum += 1;
+        break;
+    }
+}
+
+// 5. 注册测试类，左边是字符串的类名。 右边是你编写的测试类的子类名，注意不是字符串。
 REGISTER_CLASS("cpp-jsonlib", CppJsonlibTest)

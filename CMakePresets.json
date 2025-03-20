@@ -16,7 +16,7 @@
             "CMAKE_TOOLCHAIN_FILE": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake",
             "VCPKG_OVERLAY_PORTS": "${sourceDir}/custom-overlay/cpp-jsonlib",
             "CMAKE_CONFIGURATION_TYPES": "Debug",
-            "CMAKE_MAKE_PROGRAM": "E:/Ninja/ninja.exe",
+            "CMAKE_MAKE_PROGRAM": "ninja.exe",
             "VCPKG_MANIFEST_MODE": "ON",
             "CMAKE_CXX_COMPILER": "cl.exe"
           },

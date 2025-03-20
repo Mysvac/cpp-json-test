@@ -10,6 +10,7 @@ TestClassFactory& TestClassFactory::instance(){
     return instance;
 }
 
+// 分数统计
 class TestScore{
 public:
     // 反序列化耗时
@@ -26,8 +27,33 @@ public:
     long long  serialize_pretty_time_1 { -1 }; // 常规大型文本数据 big_normal.json 259KB
     long long  serialize_pretty_time_2 { -1 }; // 超级多的浮点数内容 big_double.json 2199KB
     long long  serialize_pretty_time_3 { -1 }; // 比较深的list和map嵌套 big_nesting.json 6KB
+    
+    // 数值类型解析测试
+    long long value_unserialize { -1 };
+
+    // 解析完整性测试
+    long long integrity { -1 };
+
+    // 获取内部数据测试
+    long long get_inner { -1 };
+
+    // 增加内容测试
+    long long add_child { -1 };
+
+    // 删除内容测试
+    long long delete_child { -1 };
+
+    // 浮点解析完备性
+    long long double_validity { -1 };
+
+    // 字符串转义完备性
+    long long string_validity { -1 };
+
+    // 错误检测能力
+    long long error_validity { -1 };
 };
 
+// 文件读取
 std::string readFile(const std::string& path){
     std::stringstream buffer;
     std::ifstream ifs { path };
@@ -72,9 +98,9 @@ int main(){
 
 
     // /**
-    //  * 测试遍历一遍字符串需要的时间 快的不合理，暂时不测了
+    //  * 测试转义一遍字符串需要的时间
     //  */
-    // std::cout << "[ Begin test strlen() speed. ]" << std::endl;
+    // std::cout << "[ Begin test string to JsonValue speed. ]" << std::endl;
     // {
     //     // 记录当前测试分数
     //     TestScore testScore;
@@ -86,7 +112,7 @@ int main(){
     //         while(it < len) ++it, rd = (rd+3)>>1;
     //         auto end = std::chrono::system_clock::now();
     //         auto micros = std::chrono::duration_cast<std::chrono::microseconds>(end-begin);
-    //         std::cout << "strlen() >> (1)-big_normal.json lenth:" << big_double.size() << " time:" << micros.count()/1000ll << "." << micros.count()%1000ll  << " ms"<< std::endl;
+    //         std::cout << "String to JsonValue >> (1)-big_normal.json lenth:" << big_normal.size() << " time:" << micros.count()/1000ll << "." << micros.count()%1000ll  << " ms"<< std::endl;
     //         testScore.unserialize_time_1 = micros.count();
     //         testScore.serialize_time_1 = micros.count();
     //         testScore.serialize_pretty_time_1 = micros.count();
@@ -112,7 +138,7 @@ int main(){
     //         while(it < len) ++it, rd = (rd+3)>>1;
     //         auto end = std::chrono::system_clock::now();
     //         auto micros = std::chrono::duration_cast<std::chrono::microseconds>(end-begin);
-    //         std::cout << "strlen() >> (3)-big_nesting.json lenth:" << big_double.size() << " time:" << micros.count()/1000ll << "." << micros.count()%1000ll  << " ms"<< std::endl;
+    //         std::cout << "strlen() >> (3)-big_nesting.json lenth:" << big_nesting.size() << " time:" << micros.count()/1000ll << "." << micros.count()%1000ll  << " ms"<< std::endl;
     //         testScore.unserialize_time_3 = micros.count();
     //         testScore.serialize_time_3 = micros.count();
     //         testScore.serialize_pretty_time_3 = micros.count();
@@ -325,6 +351,7 @@ int main(){
                 testScore.serialize_pretty_time_3 = -2;
                 std::cerr << libName << " >> failed in serialize_pretty (3)." << std::endl;
             }
+        
         }
 
     
