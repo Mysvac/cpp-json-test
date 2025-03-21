@@ -1,9 +1,8 @@
 // 导入模版类头文件
 #include "model_class.h"
 
-// 导入你的库
-#include "jsonlib.h"
-
+// 导入你的库的头文件
+#include "json/json.h"
 
 /* ------------------------------------------- 1 ------------------------------------------- */
 ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -11,23 +10,22 @@
 
 
 //// 1.1. 重写JsonBase类，内部存放你的库的，JSON类型。类名任意。
-class CppJsonlibObj : public JsonBase{
+class JsoncppObj : public JsonBase{
 public:
-    // 存放库中JSON可操作对象的类型
-    Json::JsonBasic json;
+    // 存放你的库中，操作JSON需要使用的类对象
+    Json::Value json;
 };
-    
+
 //// 1.2. 重写StringBase类，内部存放你的库的字符串类。如果支持std::string,就直接使用std::string.
-class CppJsonlibStr : public StringBase{
+class JsoncppStr : public StringBase{
 public:
     // 存放你库 最常用的 字符串类型
     std::string str;
     // 重写虚函数，将你的库的字符串转换成标准字符串，此步骤不计时间。
     std::string getString() override{ return str; }
 };
-    
-///////////////////////////////////////////////////////////////////////////////////////////////
 
+///////////////////////////////////////////////////////////////////////////////////////////////
 
 
 /* ------------------------------------------- 2 ------------------------------------------- */
@@ -49,44 +47,43 @@ boolenNum : 全体元素中，bool类型的数量
 nullNum : 全体元素中，null的数量
 */ 
 // 例：
-static void get_element_num(const Json::JsonBasic& jsonBasic, JsonCounter& counter){
-    switch (jsonBasic.type())
+static void get_element_num(const Json::Value& json, JsonCounter& counter){
+    switch (json.type())
     {
-    case Json::JsonType::OBJECT:
-        {
-            const Json::JsonBasic::Map& map = jsonBasic.getMapConst();
-            for(const auto& it : map){
-                get_element_num(it.second, counter);
-                counter.objectChildNum += 1;
-            }
-            counter.objectNum += 1;
+    case Json::objectValue:
+        for (Json::ValueConstIterator itr = json.begin(); itr != json.end(); ++itr) {
+            get_element_num(*itr, counter);
+            counter.objectChildNum += 1;
         }
+        counter.objectNum += 1;
         break;
-    case Json::JsonType::ARRAY:
-        {
-            const Json::JsonBasic::List& list = jsonBasic.getListConst();
-            for(const auto& it : list){
-                get_element_num(it, counter);
-                counter.arrayChildNum += 1;
-            }
-            counter.arrayNum += 1;
+    case Json::arrayValue:
+        for (Json::ValueConstIterator itr = json.begin(); itr != json.end(); ++itr){
+            get_element_num(*itr, counter);
+            counter.arrayChildNum += 1;
         }
+        counter.arrayNum += 1;
         break;
-    case Json::JsonType::STRING:
+    case Json::stringValue:
         counter.stringNum += 1;
         break;
-    case Json::JsonType::NUMBER:
+    case Json::intValue:
+    case Json::uintValue:
+    case Json::realValue:
         counter.numberNum += 1;
         break;
-    case Json::JsonType::BOOLEN:
+    case Json::booleanValue:
         counter.boolenNum += 1;
         break;
-    case Json::JsonType::ISNULL:
+    case Json::nullValue:
         counter.nullNum += 1;
         break;
     }
 };
 
+/*
+    具体例子请参考 test_cpp-jsonlib.cpp
+*/
 
 ///////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -102,15 +99,17 @@ static void get_element_num(const Json::JsonBasic& jsonBasic, JsonCounter& count
 */
 
 
-class CppJsonlibTest : public TestBase{
+class JsoncppTest : public TestBase{
+    
 
-    // 1. 重写 反序列化函数
+    // 1. 重写 反序列化函数   样例如下
     std::shared_ptr<JsonBase> deserialize(const std::string & str) override{
         // 定义 第1步 定义的 JSON子类指针
-        auto json_ptr = std::make_shared<CppJsonlibObj>();
+        auto json_ptr = std::make_shared<JsoncppObj>();
         try{
+            Json::Reader reader;
             // 用 JSON子类指针 内部的 JSON数据对象 反序列化字符串
-            json_ptr->json = Json::JsonBasic {str};
+            if(!reader.parse(str,json_ptr->json)) throw FailException {}; 
         }catch(...){ 
             // 转换失败时，务必抛出 FailException异常
             throw FailException {}; 
@@ -122,12 +121,13 @@ class CppJsonlibTest : public TestBase{
     // 2. 重写 序列化函数
     std::shared_ptr<StringBase> serialize(std::shared_ptr<JsonBase> json_base_ptr) override{
         // 定义 第1步 定义的 String子类指针
-        auto str_ptr = std::make_shared<CppJsonlibStr>();
+        auto str_ptr = std::make_shared<JsoncppStr>();
         try{
+            Json::FastWriter writer;
             // 将输入的 JSON父类指针 转换成 第1步定义的 JSON子类指针
-            auto json_ptr = std::dynamic_pointer_cast<CppJsonlibObj>(json_base_ptr);
+            auto json_ptr = std::dynamic_pointer_cast<JsoncppObj>(json_base_ptr);
             // 将 JSON子类指针 内部的 JSON数据对象 序列化成字符串，并赋值给 String子类指针 内部的字符串变量
-            str_ptr->str = json_ptr->json.serialize();
+            str_ptr->str = writer.write(json_ptr->json);
         }catch(...){ 
             throw FailException {}; 
         }
@@ -139,10 +139,11 @@ class CppJsonlibTest : public TestBase{
     std::shared_ptr<StringBase> serialize_pretty(std::shared_ptr<JsonBase> json_base_ptr) override{
         // 如果不支持美化（带缩进和换行的序列化），请直接抛出 NotSupportException 异常。
         // throw NotSupportException {};
-        auto str_ptr = std::make_shared<CppJsonlibStr>();
+        auto str_ptr = std::make_shared<JsoncppStr>();
         try{
-            auto json_ptr = std::dynamic_pointer_cast<CppJsonlibObj>(json_base_ptr);
-            str_ptr->str = json_ptr->json.serialize_pretty();
+            Json::StyledWriter writer;
+            auto json_ptr = std::dynamic_pointer_cast<JsoncppObj>(json_base_ptr);
+            str_ptr->str = writer.write(json_ptr->json);
         }catch(...){ 
             throw FailException {}; 
         }
@@ -155,7 +156,7 @@ class CppJsonlibTest : public TestBase{
         // 第2步有解释，一个简单的存数值类型，用于记录内部各种元素的数量
         JsonCounter counter;
         try{
-            auto json_ptr = std::dynamic_pointer_cast<CppJsonlibObj>(json_base_ptr);
+            auto json_ptr = std::dynamic_pointer_cast<JsoncppObj>(json_base_ptr);
             //（使用第2步中定义的函数，统计内部元素数量。）
             get_element_num(json_ptr->json, counter);
         }catch(...){
@@ -169,8 +170,9 @@ class CppJsonlibTest : public TestBase{
     void add_child_to_object(std::shared_ptr<JsonBase> json_base_ptr, const std::string& key, std::shared_ptr<JsonBase> value) override{
         // 如果不支持添加内容，请直接抛出 NotSupportException 异常。
         try{
-            auto json_ptr = std::dynamic_pointer_cast<CppJsonlibObj>(json_base_ptr);
-            auto value_ptr = std::dynamic_pointer_cast<CppJsonlibObj>(value);
+            auto json_ptr = std::dynamic_pointer_cast<JsoncppObj>(json_base_ptr);
+            auto value_ptr = std::dynamic_pointer_cast<JsoncppObj>(value);
+            if(!json_ptr->json.isObject()) throw FailException {}; 
             json_ptr->json[key] = value_ptr->json;
         }catch(...){ 
             throw FailException {}; 
@@ -181,8 +183,9 @@ class CppJsonlibTest : public TestBase{
     void add_child_to_array(std::shared_ptr<JsonBase> json_base_ptr, const size_t& index,  std::shared_ptr<JsonBase> value) override{
         // 如果不支持添加内容，请直接抛出 NotSupportException 异常。
         try{
-            auto json_ptr = std::dynamic_pointer_cast<CppJsonlibObj>(json_base_ptr);
-            auto value_ptr = std::dynamic_pointer_cast<CppJsonlibObj>(value);
+            auto json_ptr = std::dynamic_pointer_cast<JsoncppObj>(json_base_ptr);
+            auto value_ptr = std::dynamic_pointer_cast<JsoncppObj>(value);
+            if(!json_ptr->json.isArray() || index > json_ptr->json.size()) throw FailException {}; 
             json_ptr->json.insert(index, value_ptr->json);
         }catch(...){ 
             throw FailException {}; 
@@ -193,8 +196,9 @@ class CppJsonlibTest : public TestBase{
     void delete_child_from_object(std::shared_ptr<JsonBase> json_base_ptr, const std::string& key) override{
         // 如果不支持添加内容，请直接抛出 NotSupportException 异常。
         try{
-            auto json_ptr = std::dynamic_pointer_cast<CppJsonlibObj>(json_base_ptr);
-            json_ptr->json.erase(key);
+            auto json_ptr = std::dynamic_pointer_cast<JsoncppObj>(json_base_ptr);
+            if(!json_ptr->json.isObject() || !json_ptr->json.isMember(key)) throw FailException {}; 
+            json_ptr->json.removeMember(key);
         }catch(...){ 
             throw FailException {}; 
         }
@@ -204,21 +208,22 @@ class CppJsonlibTest : public TestBase{
     void delete_child_from_array(std::shared_ptr<JsonBase> json_base_ptr, const size_t& index) override{
         // 如果不支持添加内容，请直接抛出 NotSupportException 异常。
         try{
-            auto json_ptr = std::dynamic_pointer_cast<CppJsonlibObj>(json_base_ptr);
-            json_ptr->json.erase(index);
+            auto json_ptr = std::dynamic_pointer_cast<JsoncppObj>(json_base_ptr);
+            if(!json_ptr->json.isArray() || index >= json_ptr->json.size()) throw FailException {}; 
+            json_ptr->json.removeIndex((int)index , nullptr);
         }catch(...){ 
             throw FailException {}; 
         }
     }
 
-
     // 9. 获取Object子元素的方法，请使用拷贝而非移动
     std::shared_ptr<JsonBase> get_child_from_object(std::shared_ptr<JsonBase> json_base_ptr, const std::string & str) override{
         // 如果不支持添加内容，请直接抛出 NotSupportException 异常。
-        auto json_ptr = std::make_shared<CppJsonlibObj>();
+        auto json_ptr = std::make_shared<JsoncppObj>();
         try{
-            auto old_ptr = std::dynamic_pointer_cast<CppJsonlibObj>(json_base_ptr);
-            json_ptr->json = old_ptr->json.at(str);
+            auto old_ptr = std::dynamic_pointer_cast<JsoncppObj>(json_base_ptr);
+            if(!old_ptr->json.isObject() || !old_ptr->json.isMember(str)) throw FailException {}; 
+            json_ptr->json = old_ptr->json[str];
             return std::static_pointer_cast<JsonBase>(json_ptr);
         }catch(...){ 
             throw FailException {}; 
@@ -229,10 +234,11 @@ class CppJsonlibTest : public TestBase{
     // 10. 获取Array子元素的方法，请使用拷贝而非移动
     std::shared_ptr<JsonBase> get_child_from_array(std::shared_ptr<JsonBase> json_base_ptr, const size_t& index) override{
         // 如果不支持添加内容，请直接抛出 NotSupportException 异常。
-        auto json_ptr = std::make_shared<CppJsonlibObj>();
+        auto json_ptr = std::make_shared<JsoncppObj>();
         try{
-            auto old_ptr = std::dynamic_pointer_cast<CppJsonlibObj>(json_base_ptr);
-            json_ptr->json = old_ptr->json.at(index);
+            auto old_ptr = std::dynamic_pointer_cast<JsoncppObj>(json_base_ptr);
+            if(!old_ptr->json.isArray() || index >= old_ptr->json.size()) throw FailException {}; 
+            json_ptr->json = old_ptr->json[(int)index];
             return std::static_pointer_cast<JsonBase>(json_ptr);
         }catch(...){ 
             throw FailException {}; 
@@ -244,34 +250,35 @@ class CppJsonlibTest : public TestBase{
     double get_value_as_double(std::shared_ptr<JsonBase> json_base_ptr) override{
         // 请务必支持。
         try{
-            auto json_ptr = std::dynamic_pointer_cast<CppJsonlibObj>(json_base_ptr);
-            return json_ptr->json.as_double();
+            auto json_ptr = std::dynamic_pointer_cast<JsoncppObj>(json_base_ptr);
+            if(!json_ptr->json.isDouble() && !json_ptr->json.isIntegral()) throw FailException {}; 
+            return json_ptr->json.asDouble();
         }catch(...){ 
             throw FailException {}; 
         }
         return 0;
     }
-
 
     // 12. 值类型，获取布尔类型的值
     bool get_value_as_bool(std::shared_ptr<JsonBase> json_base_ptr) override{
         // 请务必支持。
         try{
-            auto json_ptr = std::dynamic_pointer_cast<CppJsonlibObj>(json_base_ptr);
-            return json_ptr->json.as_bool();
+            auto json_ptr = std::dynamic_pointer_cast<JsoncppObj>(json_base_ptr);
+            if(!json_ptr->json.isBool()) throw FailException {}; 
+            return json_ptr->json.asBool();
         }catch(...){ 
             throw FailException {}; 
         }
         return 0;
     }
 
-
     // 13. 值类型，获取长整数类型的值
     long long get_value_as_int64(std::shared_ptr<JsonBase> json_base_ptr) override{
         // 请务必支持。
         try{
-            auto json_ptr = std::dynamic_pointer_cast<CppJsonlibObj>(json_base_ptr);
-            return json_ptr->json.as_int64();
+            auto json_ptr = std::dynamic_pointer_cast<JsoncppObj>(json_base_ptr);
+            if(!json_ptr->json.isIntegral()) throw FailException {}; 
+            return json_ptr->json.asInt64();
         }catch(...){ 
             throw FailException {}; 
         }
@@ -282,8 +289,9 @@ class CppJsonlibTest : public TestBase{
     std::string get_value_as_string(std::shared_ptr<JsonBase> json_base_ptr) override{
         // 请务必支持，可以先转const char* 然后转std::string。
         try{
-            auto json_ptr = std::dynamic_pointer_cast<CppJsonlibObj>(json_base_ptr);
-            return json_ptr->json.as_string();
+            auto json_ptr = std::dynamic_pointer_cast<JsoncppObj>(json_base_ptr);
+            if(!json_ptr->json.isString()) throw FailException {}; 
+            return json_ptr->json.asCString();
         }catch(...){ 
             throw FailException {}; 
         }
@@ -293,16 +301,14 @@ class CppJsonlibTest : public TestBase{
     // 15. 值类型，判断内部是否是null值。如果是null请返回null，如果不是请抛出异常或返回false
     bool value_is_null(std::shared_ptr<JsonBase> json_base_ptr) override{
         try{
-            auto json_ptr = std::dynamic_pointer_cast<CppJsonlibObj>(json_base_ptr);
-            return json_ptr->json.is_null();
+            auto json_ptr = std::dynamic_pointer_cast<JsoncppObj>(json_base_ptr);
+            return json_ptr->json.isNull();
         }catch(...){ 
             throw FailException {}; 
         }
         return 0;
     }
-
 };
-
 
 ///////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -313,7 +319,7 @@ class CppJsonlibTest : public TestBase{
 //////// 使用下面这个宏，注册你的测试类对象
 
 // 参数1：你库的名字，随便写   参数2: 你的测试子类名，是第3步中的类名，不能加双引号
-REGISTER_CLASS("cpp-jsonlib", CppJsonlibTest)
+REGISTER_CLASS("Jsoncpp", JsoncppTest)
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////////

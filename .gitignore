@@ -1,5 +1,15 @@
 
+.vs/
 .vscode/
+.idea/
 build/
 vcpkg_installed/
+
+result/images/
+result/images*/
+
 result/result.csv
+result/*.txt
+
+CMakeUserPresets.json
+CMakeLists.txt.user

@@ -7,32 +7,85 @@
     },
     "configurePresets": [
       {
-        "name": "Ninja",
-        "description": "Global config preset - base",
-        "generator": "Ninja Multi-Config",
+        "hidden": true,
+        "name": "config-base",
+        "generator": "Ninja",
         "binaryDir": "${sourceDir}/build/",
-        "installDir": "${sourceDir}/build/",
+        "installDir": "${sourceDir}/build/"
+      },
+      {
+        "name": "win-x64-debug",
+        "displayName": "win debug",
+        "inherits": "config-base",
         "cacheVariables": {
+          "CMAKE_TOOLCHAIN_FILE": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake",
+          "VCPKG_OVERLAY_PORTS": "${sourceDir}/custom-overlay/cpp-jsonlib",
+          "VCPKG_MANIFEST_MODE": "ON",
+          "CMAKE_BUILD_TYPE": "Debug",
+          "CMAKE_CXX_COMPILER": "cl.exe",
+          "CMAKE_C_COMPILER": "cl.exe"
+        },
+        "architecture": {
+          "value": "x64",
+          "strategy": "external"
+        },
+        "condition": {
+            "type": "equals",
+            "lhs": "${hostSystemName}",
+            "rhs": "Windows"
+        }
+      },
+      {
+        "name": "linux-debug",
+        "displayName": "Linux Debug",
+        "inherits": "config-base",
+        "cacheVariables": {
+          "CMAKE_TOOLCHAIN_FILE": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake",
+          "VCPKG_OVERLAY_PORTS": "${sourceDir}/custom-overlay/cpp-jsonlib",
+          "VCPKG_MANIFEST_MODE": "ON",
+          "CMAKE_BUILD_TYPE": "Debug"
+        },
+        "condition": {
+            "type": "equals",
+            "lhs": "${hostSystemName}",
+            "rhs": "Linux"
+        }
+      },
+      {
+          "name": "macOS-debug",
+          "displayName": "macOS Debug",
+          "inherits": "config-base",
+          "cacheVariables": {
             "CMAKE_TOOLCHAIN_FILE": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake",
             "VCPKG_OVERLAY_PORTS": "${sourceDir}/custom-overlay/cpp-jsonlib",
-            "CMAKE_CONFIGURATION_TYPES": "Debug",
-            "CMAKE_MAKE_PROGRAM": "ninja.exe",
             "VCPKG_MANIFEST_MODE": "ON",
-            "CMAKE_CXX_COMPILER": "cl.exe"
+            "CMAKE_BUILD_TYPE": "Debug"
           },
-        "architecture": {
-            "value": "x64",
-            "strategy": "external"
-        }
+          "condition": {
+              "type": "equals",
+              "lhs": "${hostSystemName}",
+              "rhs": "Darwin"
+          }
       }
     ],
     "buildPresets": [
         {
-        "name": "build-debug",
-        "displayName": "Build Debug",
-        "configurePreset": "Ninja",
+        "name": "win-x64-build",
+        "displayName": "win Build Debug",
+        "configurePreset": "win-x64-debug",
         "configuration": "Debug"
+        },
+        {
+          "name": "linux-build",
+          "displayName": "linux Build Debug",
+          "configurePreset": "linux-debug",
+          "configuration": "Debug"
+        },
+        {
+          "name": "macOS-build",
+          "displayName": "macOS Build Debug",
+          "configurePreset": "macOS-debug",
+          "configuration": "Debug"
         }
     ]
 }
-  

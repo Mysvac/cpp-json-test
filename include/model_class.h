@@ -28,32 +28,19 @@ public:
             boolenNum == jsonCounter.boolenNum &&
             nullNum == jsonCounter.nullNum;
     }
-
-    inline std::string value(){
-        std::string str;
-        str += "objectNum :" + std::to_string(objectNum);
-        str += "\nobjectChildNum :" + std::to_string(objectChildNum);
-        str += "\narrayNum :" + std::to_string(arrayNum);
-        str += "\narrayChildNum :" + std::to_string(arrayChildNum);
-        str += "\nstringNum :" + std::to_string(stringNum);
-        str += "\nnumberNum :" + std::to_string(numberNum);
-        str += "\nboolenNum :" + std::to_string(boolenNum);
-        str += "\nnullNum :" + std::to_string(nullNum) + "\n";
-        return std::move(str);
-    }
 };
 
 // 库不支持的操作，请直接抛出此异常
-class NotSupportException: std::runtime_error{
+class NotSupportException: public std::runtime_error{
 public:
     NotSupportException(): std::runtime_error("NotSupportException"){}
     NotSupportException(const std::string& str): std::runtime_error(str){}
 };
 
 // 任何操作失败，JSON结构错误，JSON类型与运算符不匹配时，请抛出此异常
-class FailException: std::runtime_error{
+class FailException: public std::runtime_error{
 public:
-    FailException(): std::runtime_error("NotSupportException"){}
+    FailException(): std::runtime_error("FailException"){}
     FailException(const std::string& str): std::runtime_error(str){}
 };
 
@@ -74,7 +61,7 @@ class TestBase{
 public:
 
     // 反序列化，输入标准字符串，可以使用.c_str()获取字符指针，几乎无额外耗时
-    virtual std::shared_ptr<JsonBase> unserialize(const std::string & str) = 0;
+    virtual std::shared_ptr<JsonBase> deserialize(const std::string & str) = 0;
 
     // 序列化
     virtual std::shared_ptr<StringBase> serialize(std::shared_ptr<JsonBase> jsonBase) = 0;
@@ -140,10 +127,10 @@ private:
 };
 
 #define REGISTER_CLASS(libName, className) \
-    static void register_##className() { \
-        TestClassFactory::instance().registerClass<className>( libName ); \
+    static void register_##className () { \
+        TestClassFactory::instance().registerClass<className>(libName); \
     } \
-    static bool registered_##className = ( register_##className() , true) ;
+    static bool registered_##className = ( register_##className () , true); \
 
 
 

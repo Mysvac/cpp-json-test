@@ -85,7 +85,7 @@ static void get_element_num(const Json::JsonBasic& jsonBasic, JsonCounter& count
         counter.nullNum += 1;
         break;
     }
-};
+}
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////////

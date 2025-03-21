@@ -1,6 +1,7 @@
 {
-    "dependencies": [
-      "cpp-jsonlib"
-    ]
-  }
-  
+  "dependencies": [
+    "cpp-jsonlib",
+    "rapidjson",
+    "jsoncpp"
+  ]
+}
