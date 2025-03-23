@@ -9,7 +9,7 @@ C++17 JSON解析库测试框架。
 
 提供测试报告和结果数据表格，提供工具生成测试对比图。
 
-## 项目说明
+## 项目介绍
 ### 基本说明
 1. 框架采用C++17，框架本身仅依赖标准库和`boost-process`。
 2. 项目构建使用`CMake`，搭配`CMakePreset`，完全跨平台。
@@ -17,24 +17,35 @@ C++17 JSON解析库测试框架。
 4. 内存测试依赖`boost-process`，可以修改`CMakeLists.txt`关闭内存测试，关闭后不再依赖`boost-process`。
 
 ### 工作原理概要
-`model_class.h`中定义了一个`TestBase`类，是测试类的接口。程序通过这个类的对象，调用内部函数，进行测试。
+![工作方式](documents/工作方式.png)
 
-`model_class.h`中声明了一个全局单例，存储全部测试类的实例对象。末尾提供了一个宏，用于注册测试类，也就是自动生成测试类的实例对象，并放入这个单例。
+TestBase的子类，也就是各库的测试代码文件，统一放在`test_codes/`目录下。
 
-主函数会获取这个单例，遍历内部的所有对象，并通过统一的测试内容进行测试，最后输出错误报告和统计表格。
+新增测试类，直接添加cpp文件即可，无需修改主函数和CMake等配置。<br>
+（仅`test_codes/`文件夹下的`.cpp`文件，不递归扫描，因此不编译`test_codes/models/`下的文件。）
 
-内存测试通过`PROJECT_USE_BOOST_PROCESS`宏控制，如果此宏被定义，则导入`boost-process`库并进行内存测试。<br>
-可以修改`CMakeLists.txt`，删除相关的 库导入和宏定义 来删除此宏。 关闭后程序不将再依赖`boost-process`库，无需下载。<nr>
-（不进行内存测试，但正常进行其他测试。）
+注：若`test_codes/`下没有任何文件，也就没有注册任何测试类。 主程序依然能正常运行，但是输出的报告中不含任何测试结果。
 
-注：如果`test_codes/`下没有测试类文件，也就没有注册任何测试类。 主程序依然能正常运行，但是输出的报告中不含任何测试结果。
+### 内存测试说明
+内存测试依赖`boost-process`库。
+
+内存测试可以通过`CMakeLists.txt`中设置的`PROJECT_USE_BOOST_PROCESS`宏进行控制。<br>
+如果此宏未定义，则不进行内存测试，则不依赖`boost-process`库，无需下载（其他测试正常进行）。
+
+
+### 如何导入新的库
+下面提供3种方式：
+1. 使用vcpkg安装第三方库，推荐清单模式，使用`vcpkg add port 包名`添加。然后在`CMakeLists.txt`中使用`find_package`和`target_link_libraries`即可。
+2. 直接放源码。将头文件放入`include`文件夹，将源文件放入`src`文件夹即可，项目构建/生成时会把这些代码也加入构建/编译生成。
+3. 使用vcpkg的custom-overlay模式，添加自定义位置的第三方库，推荐看官方示例。
+
 
 ### 如何测试新的库
-根据上述的工作原理，你只需要写一个`.cpp`文件，导入头文件`model_class.h`，内部写一个子类继承并实现`TestBase`接口，最后通过宏注册即可。
+根据上述的工作原理，你只需要写一个`.cpp`文件，导入头文件`model_class.h`和你的库的头文件。
+
+内部写一个子类继承`TestBase`接口并实现全部纯虚函数，最后通过宏注册即可。
 
 `test_codes/`文件夹下有一些现成的代码，`test_codes/models/`文件夹中提供了一些参考代码。
-
-具体使用，请看下方的"编写测试类文件"。
 
 ### 项目构建与编译
 如果你有CMake基础，可以看看`CMakeLists.txt`和`CMakePresets.json`，项目结构其实非常简单。
@@ -44,53 +55,46 @@ C++17 JSON解析库测试框架。
 cmake --preset <configure-preset-name>
 cmake --build --preset <build-preset-name>
 ```
-就能配置和生成。
+就能配置和生成。（推荐Debug模式，没必要Release。）
+
+### 使用测试结果
+前置： 完成上述步骤并运行可执行程序。
+
+测试完成后，各种数据将放在`result/`文件夹下，这里有3大内容：
+1. `result/reports/`文件夹，存放各库的测试错误报告（部分错误并无危害，是正常的）。
+2. `result/result.csv`文件，存放着各库 各测试项目的具体分数。
+3. `get_chart_**.py`Python程序，用于读取`result.csv`并生成图表。
+
+请进入`result/`文件夹，然后执行`python get_chart_zh.py`命令即可。<br>
+图片将生成在`result/images_zh/`文件夹中。
 
 
-### 如何导入新的库
-下面提供3种方式：
-1. 使用vcpkg安装第三方库，推荐清单模式，使用`vcpkg add port 包名`添加。然后在`CMakeLists.txt`中`find_package`和`target_link_libraries`即可。
-2. 直接放源码。将头文件放入`include`文件夹，将源文件放入`src`文件夹即可，项目构建时会把这些代码也加入构建。
-3. 使用vcpkg的custom-overlay模式，添加自定义位置的第三方库，推荐看官方示例。
-
-库添加后，请在`test_codes/`文件中新建cpp文件，编写测试子类并用宏注册。
-
-## 添加自己的测试类文件和生成结果图
-
-0. 如果需要导入依赖，请先看上方的"如何导入新的库"。
-1. 进入`test_codes/`文件夹，删除不需要的测试文件。
-2. 复制一份`test_codes/models/model_zh.cpp`模板文件，到`test_codes/`文件夹中，文件名可以随便改（.cpp后缀不能改）。
-3. 打开此文件，根据注释，再参考其他几个库已经写好的测试模板，自行填写内容。
-4. 填写完整后，无需修改其他内容，直接构建项目并运行即可。
-5. 错误报告和最终结果会在`result/`文件夹下。
-6. 进入`result/`文件夹，执行python程序`get_chat_zh.py`即可生成对比图。
-
-
-## 注意事项
-1. 主程序不依赖任何外部库，不需要的库，记得删除vcpkg端口和CMakeLists.txt中的查找链接。
-2. `test_codes/`文件夹下存放测试类代码，不会递归查询，所以`test_codes/models`内的代码不会被编译。
-3. `test_codes/`文件夹即使全删，程序依然能正常运行，不想要什么测试，删了就行。
-4. Qt不建议使用vcpkg安装，请使用CMake预设指定本机中QT的位置。还需要手动复制动态库文件，才能运行。
+### 注意事项
+1. `test_codes/`文件夹下存放测试类代码，不会递归查询，所以`test_codes/models`内的代码不会被编译。
+2. `test_codes/`文件夹即使全删，程序依然能正常运行。不想要什么测试，删了就行。
+3. 如果删除了测试文件，记得修改`CMakeLists.txt`和`vcpkg.json`，删除项目的库依赖，不然还会下载。
+4. Qt的测试需要使用CMake预设指定本机中Qt位置，还需要手动复制动态库文件。
 5. `custom-overlay/`文件夹，存放的是自定义vcpkg库目标，用于安装`cpp-jsonlib`库，不需要的话可以删除。
-6. 内存测试依赖`boost-process`库。如果修改了`CMakeLists.txt`关闭了内存测试，记得vcpkg也删除相关依赖。
+6. 内存测试依赖`boost-process`库。可以修改`CMakeLists.txt`关闭内存测试，关闭后无需此库。
 
 ## 效果例图
-目前仅比较4个库，各有优劣（O2优化）：
-1. rapidjson 性能极佳，序列化与反序列化极快，内存占用也低，但操作极其繁杂。
-2. Qt 操作比rapidjson简单些，但是对直接解析值类型的支持性不好。
-3. jsoncpp 操作非常简单，现代，不抛出异常，性能差了点。
-4. cpp-jsonlib 操作非常简单，现代，抛出异常的库，性能差了点。 
-5. boost-json 操作非常简单，现代，抛出异常的库，性能较好。 
+目前仅比较如下几个库，各有优劣（O2优化下）：
+1. rapidjson 操作非常繁杂，解析与操作极快，内存占用很低，性能极佳。
+2. boost-json 操作非常简单，现代，抛出异常的库，性能较好。 
+3. Qt 操作难度中等，值类型的直接解析 支持性较差，性能中等。
+4. jsoncpp 操作非常简单，现代，不抛出异常，性能略差。
+5. cpp-jsonlib 操作非常简单，现代，抛出异常的库，性能略差。 
 
-![正常解析](result/example_images/正常解析测试.png)
-![值类型支持](result/example_images/数值类型支持.png)
-![内存占用](result/example_images/内存占用.png)
-![深层数据解析](result/example_images/深度数据解析测试.png)
-![反序列化](result/example_images/反序列化测试.png)
-![序列化](result/example_images/序列化测试.png)
-![序列化美化](result/example_images/美化序列化测试.png)
-![增删改查](result/example_images/增删改查加权测试.png)
-![字符串转义测试](result/example_images/字符串转义测试.png)
-![浮点数精度测试](result/example_images/浮点数精度测试.png)
-![数值格式支持测试](result/example_images/数值格式支持测试.png)
-![语法严格性](result/example_images/语法严格性测试.png)
+![正常解析](documents/example_images/正常解析测试.png)
+![值类型支持](documents/example_images/数值类型支持.png)
+![内存占用](documents/example_images/内存占用.png)
+![深层数据解析](documents/example_images/深度数据解析测试.png)
+![反序列化](documents/example_images/反序列化测试.png)
+![序列化](documents/example_images/序列化测试.png)
+![序列化美化](documents/example_images/美化序列化测试.png)
+![增删改查](documents/example_images/增删改查加权测试.png)
+![字符串转义测试](documents/example_images/字符串转义测试.png)
+![浮点数精度测试](documents/example_images/浮点数精度测试.png)
+![数值格式支持测试](documents/example_images/数值格式支持测试.png)
+![语法严格性](documents/example_images/语法严格性测试.png)
+

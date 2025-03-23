@@ -2,7 +2,7 @@
 
  2. value type deserialize test......
 CPP TEST CODE FILE: F:\cpp-json-test\src\main.cpp
-CPP TEST CODE LINE: 144
+CPP TEST CODE LINE: 149
  2. value type deserialize test faild!!!
 Exception result:FailException
 Test samples:
@@ -16,7 +16,7 @@ Test samples:
 
  15. double_validity test.
 CPP TEST CODE FILE: F:\cpp-json-test\src\main.cpp
-CPP TEST CODE LINE: 697
+CPP TEST CODE LINE: 702
 
 [ 51.161E-  ] is valid but deserialize failed.
 
@@ -28,21 +28,21 @@ CPP TEST CODE LINE: 697
 
  16. double_accuracy test.
 CPP TEST CODE FILE: F:\cpp-json-test\src\main.cpp
-CPP TEST CODE LINE: 782
+CPP TEST CODE LINE: 787
  16. double_accuracy test failed.
 
 -----------------------------------------
 
  17. string_validity escape test.
 CPP TEST CODE FILE: F:\cpp-json-test\src\main.cpp
-CPP TEST CODE LINE: 842
+CPP TEST CODE LINE: 847
  17. string_validity test failed.
 
 -----------------------------------------
 
  18. error_validity test.
 CPP TEST CODE FILE: F:\cpp-json-test\src\main.cpp
-CPP TEST CODE LINE: 913
+CPP TEST CODE LINE: 918
 
  [ " 
                         " ]  is invalid but  deserialize passed.

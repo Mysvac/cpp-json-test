@@ -2,48 +2,48 @@
 
  2. value type deserialize test......
 CPP TEST CODE FILE: F:\cpp-json-test\src\main.cpp
-CPP TEST CODE LINE: 144
+CPP TEST CODE LINE: 149
 
 -----------------------------------------
 
  5. unserialize (3) test not support.
  file: json_test_files/big_nesting.json 
 CPP TEST CODE FILE: F:\cpp-json-test\src\main.cpp
-CPP TEST CODE LINE: 315
+CPP TEST CODE LINE: 320
 
 -----------------------------------------
 
  8. serialize (3) test failed.
  file: json_test_files/big_nesting.json 
 CPP TEST CODE FILE: F:\cpp-json-test\src\main.cpp
-CPP TEST CODE LINE: 414
+CPP TEST CODE LINE: 419
 
 -----------------------------------------
 
  9. serialize_pretty (1) test not support.
  file: json_test_files/big_normal.json 
 CPP TEST CODE FILE: F:\cpp-json-test\src\main.cpp
-CPP TEST CODE LINE: 436
+CPP TEST CODE LINE: 441
 
 -----------------------------------------
 
  10. serialize_pretty (2) test not support.
  file: json_test_files/big_double.json 
 CPP TEST CODE FILE: F:\cpp-json-test\src\main.cpp
-CPP TEST CODE LINE: 467
+CPP TEST CODE LINE: 472
 
 -----------------------------------------
 
  11. serialize_pretty (3) test failed.
  file: json_test_files/big_nesting.json 
 CPP TEST CODE FILE: F:\cpp-json-test\src\main.cpp
-CPP TEST CODE LINE: 507
+CPP TEST CODE LINE: 512
 
 -----------------------------------------
 
  15. double_validity test.
 CPP TEST CODE FILE: F:\cpp-json-test\src\main.cpp
-CPP TEST CODE LINE: 697
+CPP TEST CODE LINE: 702
 
 [ 51161. ] is valid but deserialize failed.
 
@@ -59,19 +59,19 @@ CPP TEST CODE LINE: 697
 
  16. double_accuracy test.
 CPP TEST CODE FILE: F:\cpp-json-test\src\main.cpp
-CPP TEST CODE LINE: 782
+CPP TEST CODE LINE: 787
 
 -----------------------------------------
 
  17. string_validity escape test.
 CPP TEST CODE FILE: F:\cpp-json-test\src\main.cpp
-CPP TEST CODE LINE: 842
+CPP TEST CODE LINE: 847
 
 -----------------------------------------
 
  18. error_validity test.
 CPP TEST CODE FILE: F:\cpp-json-test\src\main.cpp
-CPP TEST CODE LINE: 913
+CPP TEST CODE LINE: 918
 
  [ -1.E+ ]  is valid but  deserialize failed.
 

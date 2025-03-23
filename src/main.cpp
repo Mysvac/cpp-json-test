@@ -32,6 +32,10 @@ int main(){
     size_t base_memory_KB = -1;
     JsonCounter counter_big_varies;
 
+    // 创建错误报告存放的文件夹（如果文件夹不存在）。
+    std::string path = std::string(PROJECT_RESULT_PATH) + "/reports";
+    std::filesystem::create_directories(path);
+
     // 开始读取测试需要的JSON文件和初始化计数器
     {
         std::cout << "Reading the test JSON files..." << std::endl;
@@ -64,6 +68,7 @@ int main(){
 
 
     std::cout << "\n------------------Begin testing------------------\n" << std::endl;
+
     // 开始遍历全部库的测试类，跑内部的测试函数
     for(auto& it : dict){
         // 获取库名
