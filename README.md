@@ -76,15 +76,16 @@ cmake --build --preset <build-preset-name>
 
 ## 效果例图
 目前仅比较4个库，各有优劣（O2优化）：
-1. rapidjson 极快，内存占用也低，但是真的难用。
-2. Qt 用起来比rapidjson稍微好点，但是对值类型作为根元素，支持性不好。
-3. jsoncpp 操作非常简单，现代，性能就差了点。
-4. cpp-jsonlib 操作非常简单，现代，唯一会抛出异常的库，性能也差了点。 
-
+1. rapidjson 性能极佳，序列化与反序列化极快，内存占用也低，但操作极其繁杂。
+2. Qt 操作比rapidjson简单些，但是对直接解析值类型的支持性不好。
+3. jsoncpp 操作非常简单，现代，不抛出异常，性能差了点。
+4. cpp-jsonlib 操作非常简单，现代，抛出异常的库，性能差了点。 
+5. boost-json 操作非常简单，现代，抛出异常的库，性能较好。 
 
 ![正常解析](result/example_images/正常解析测试.png)
 ![值类型支持](result/example_images/数值类型支持.png)
 ![内存占用](result/example_images/内存占用.png)
+![深层数据解析](result/example_images/深度数据解析测试.png)
 ![反序列化](result/example_images/反序列化测试.png)
 ![序列化](result/example_images/序列化测试.png)
 ![序列化美化](result/example_images/美化序列化测试.png)

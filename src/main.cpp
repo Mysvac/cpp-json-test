@@ -321,7 +321,7 @@ int main(){
             try{
                 std::cout << libName << " >> serialize (1) testing......"  << std::flush;
                 auto begin = std::chrono::system_clock::now();
-
+                if(json_ptr_1 == nullptr) throw FailException{};
                 auto tmp =  testClass->serialize(json_ptr_1);
 
                 auto end = std::chrono::system_clock::now();
@@ -354,7 +354,7 @@ int main(){
             try{
                 std::cout << libName << " >> serialize (2) testing......"  << std::flush;
                 auto begin = std::chrono::system_clock::now();
-
+                if(json_ptr_2 == nullptr) throw FailException{};
                 auto tmp =  testClass->serialize(json_ptr_2);
 
                 auto end = std::chrono::system_clock::now();
@@ -387,7 +387,7 @@ int main(){
             try{
                 std::cout << libName << " >> serialize (3) testing......"  << std::flush;
                 auto begin = std::chrono::system_clock::now();
-
+                if(json_ptr_3 == nullptr) throw FailException{};
                 auto tmp =  testClass->serialize(json_ptr_3);
 
                 auto end = std::chrono::system_clock::now();
@@ -420,7 +420,7 @@ int main(){
             try{
                 std::cout << libName << " >> serialize_pretty (1) testing......"  << std::flush;
                 auto begin = std::chrono::system_clock::now();
-
+                if(json_ptr_1 == nullptr) throw FailException{};
                 auto tmp =  testClass->serialize_pretty(json_ptr_1);
 
                 auto end = std::chrono::system_clock::now();
@@ -451,7 +451,7 @@ int main(){
             try{
                 std::cout << libName << " >> serialize_pretty (2) testing......"  << std::flush;
                 auto begin = std::chrono::system_clock::now();
-
+                if(json_ptr_2 == nullptr) throw FailException{};
                 auto tmp =  testClass->serialize_pretty(json_ptr_2);
 
                 auto end = std::chrono::system_clock::now();
@@ -482,7 +482,7 @@ int main(){
             try{
                 std::cout << libName << " >> serialize_pretty (3) testing......"  << std::flush;
                 auto begin = std::chrono::system_clock::now();
-
+                if(json_ptr_3 == nullptr) throw FailException{};
                 auto tmp =  testClass->serialize_pretty(json_ptr_3);
 
                 auto end = std::chrono::system_clock::now();

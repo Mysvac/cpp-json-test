@@ -52,14 +52,17 @@ if __name__ == "__main__":
     df['内存占用'] = df['memory']
     df = df.drop(columns=['memory'])
 
+    df['深度数据解析测试'] = (df['unserialize_3'] > -0.5).astype(int)
 
-    df['反序列化测试'] = (df['unserialize_1'] + 0.1 * df['unserialize_2'] + 2.*df['unserialize_3'])/1000.
+
+
+    df['反序列化测试'] = df['unserialize_1'] + 0.12 * df['unserialize_2']
     df = df.drop(columns=['unserialize_1' , 'unserialize_2', 'unserialize_3'])
 
-    df['序列化测试'] = (df['serialize_1'] + 0.1 * df['serialize_2'] + 2.*df['serialize_3'])/1000.
+    df['序列化测试'] = df['serialize_1'] + 0.12 * df['serialize_2']
     df = df.drop(columns=['serialize_1' , 'serialize_2', 'serialize_3'])
 
-    df['美化序列化测试'] = (df['prettify_1'] + 0.1 * df['prettify_2'] + 2.*df['prettify_3'])/1000.
+    df['美化序列化测试'] = df['prettify_1'] + 0.12 * df['prettify_2']
     df = df.drop(columns=['prettify_1' , 'prettify_2', 'prettify_3'])
 
     df['获取子元素测试'] = df['get_child'] / 1000.
@@ -88,6 +91,7 @@ if __name__ == "__main__":
     get_chart("正常解析测试", "能否正常解析(1/0)" , df)
     get_chart("数值类型支持", "根支持为数值类型(1/0)", df)
     get_chart("内存占用", "反序列化对象大小(KB)", df)
+    get_chart("深度数据解析测试", "支持非常深层次的数据解析(1/0)", df)
     get_chart("反序列化测试", "加权耗时(毫秒)" ,df)
     get_chart("序列化测试", "加权耗时(毫秒)", df)
     get_chart("美化序列化测试", "加权耗时(毫秒)" ,df)
