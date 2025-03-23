@@ -29,6 +29,7 @@ int main(){
     std::string big_test;
     std::string big_object;
     std::string big_array;
+    size_t base_memory_KB = -1;
     JsonCounter counter_big_varies;
 
     // 开始读取测试需要的JSON文件和初始化计数器
@@ -72,7 +73,7 @@ int main(){
         // 统计当前库的测试分数
         TestScore testScore;
         // 当前库的错误报告
-        std::ofstream ofs{ std::string{ PROJECT_RESULT_PATH } + "/" + libName + "_error_report.txt" };
+        std::ofstream ofs{ std::string{ PROJECT_RESULT_PATH } + "/reports/" + libName + "_error_report.txt" };
         ofs << "[ test lib: " << libName << " ]\n" << std::endl;
 
         std::cout << "[ Begin of test lib: " << libName << " ]" << std::endl;
@@ -80,14 +81,18 @@ int main(){
 
         // 基础测试 1.解析的数据是否正确 2.是否支持解析值类型 
         {
+
+
             JsonCounter jsonCounter;
+            std::shared_ptr<JsonBase> base_test_ptr;
 
             // 1. validity 解析正确性测试
             try{
+                std::string tmp_big_varies = big_varies;
                 std::cout << libName << " >> integrity testing......"  << std::flush;
-                std::shared_ptr<JsonBase> json_ptr =  testClass->deserialize(big_varies);
+                base_test_ptr =  testClass->deserialize(tmp_big_varies);
 
-                jsonCounter = testClass->count_element(json_ptr);
+                jsonCounter = testClass->count_element(base_test_ptr);
 
                 if(counter_big_varies == jsonCounter){
                     testScore.validity = 1;
@@ -191,7 +196,26 @@ int main(){
 
                 std::cerr << '\r' << libName << " >> JSON value type failed." << std::string(20, ' ') << std::endl;
             }
+        
+            #ifdef PROJECT_USE_BOOST_PROCESS
+
+            std::this_thread::sleep_for(std::chrono::seconds(1));
+            base_memory_KB = get_memory_usage_KB();
+        
+            #endif
         }
+
+        #ifdef PROJECT_USE_BOOST_PROCESS
+
+        std::this_thread::sleep_for(std::chrono::seconds(1));
+        testScore.memory = base_memory_KB - get_memory_usage_KB();
+        std::cout << libName << " >> memory used:" << testScore.memory << " K" << std::string(15, ' ') << std::endl;
+
+        #elif
+
+        std::cout << "memory test not support: PROJECT_USE_BOOST_PROCESS is not open" << std::endl;
+    
+        #endif
 
         // 3-11. unserialize and serialize speed test 反序列化与序列化测速
         {
@@ -485,6 +509,8 @@ int main(){
                 std::cerr << '\r' << libName << " >> serialize_pretty (3) failed." << std::string(20, ' ') << std::endl;
             }
         
+
+            // std::cout << "memory_usage_KB：" << get_memory_usage_KB() << std::endl;;
         }
 
 
@@ -991,7 +1017,7 @@ int main(){
 
         }
 
-    
+        ofs.close();
         ScoreMap[libName] = testScore;
         std::cout << "[ End of test lib: " << libName << " ]" << std::endl;
         std::cout << "\n---------------------------------------------------------\n" << std::endl;

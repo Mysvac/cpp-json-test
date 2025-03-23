@@ -1,4 +1,5 @@
 #pragma once
+
 #include <fstream>
 #include <sstream>
 #include <iostream>
@@ -6,6 +7,66 @@
 #include <map>
 #include <vector>
 #include <chrono>
+#include <thread>
+
+
+/////////////////////////////////////////////////////////////////
+//// 使用boost的process模块，监控进程的内存占用
+//// 可以在CMakeLists.txt中注释掉此宏，然后就可以不用下载boost-process
+//// 如果不使用，记得修改CMake配置之后，vcpkg删除端口boost-process
+#ifdef PROJECT_USE_BOOST_PROCESS
+
+#include <boost/process.hpp>
+#include <boost/asio.hpp>
+
+size_t memory_str_to_size_t(std::string str){
+    size_t res = 0;
+    for(const char& it : str){
+        if(std::isdigit(it)) res = res * 10 + (it - '0');
+    }
+    if(res==0) return -1;
+    else return res;
+}
+
+
+size_t get_memory_usage_KB() {
+    std::string memoryUsage;
+    boost::process::ipstream is;
+
+#ifdef _WIN32
+
+    boost::process::child c("tasklist /FI \"PID eq " + std::to_string(boost::this_process::get_id()) + "\"", boost::process::std_out > is);
+
+    std::string line;
+    while (std::getline(is, line)) {
+        if (!line.empty()){
+            for(int it = line.size()-1; it>=0; --it){
+                if(std::isspace(line[it])) continue;
+                else if(line[it] == 'K' || line[it] == 'k'){
+                    it -= 10;
+                    if(it >= 0 ){
+                        memoryUsage = line.substr(it,9);
+                    }
+                    break;
+                }
+                else break;
+            }
+        } 
+    }
+    c.wait();
+#else
+
+    boost::process::child c("ps -o rss= -p " + std::to_string(boost::this_process::get_id()), boost::process::std_out > is);
+
+    std::getline(is, memoryUsage);
+    c.wait();
+#endif
+
+    return memory_str_to_size_t(memoryUsage);
+}
+
+#endif
+/////////////////////////////////////////////////////////////////
 
 // 统计分数用的对象
 class TestScore{
@@ -30,6 +91,8 @@ public:
     long long  prettify_1 { -1 }; // 常规大型文本数据 big_normal.json 259KB
     long long  prettify_2 { -1 }; // 超级多的浮点数内容 big_double.json 2199KB
     long long  prettify_3 { -1 }; // 比较深的list和map嵌套 big_nesting.json 6KB
+
+    long long memory { -1 };
 
     // 获取内部数据测试
     long long get_child { -1 };
@@ -69,7 +132,7 @@ std::string readFile(const std::string& path){
 
 void my_write_csv(const std::map<std::string, TestScore>& mp){
     std::vector<std::string> test_project_name = { 
-        "lib_name", "validity", "value_type",
+        "lib_name", "validity", "value_type", "memory",
         "unserialize_1", "unserialize_2", "unserialize_3", 
         "serialize_1","serialize_2", "serialize_3", 
         "prettify_1", "prettify_2", "prettify_3",
@@ -91,6 +154,7 @@ void my_write_csv(const std::map<std::string, TestScore>& mp){
         ofs << it.first;
         ofs << ',' << it.second.validity;
         ofs << ',' << it.second.value_type;
+        ofs << ',' << it.second.memory;
         ofs << ',' << it.second.unserialize_1;
         ofs << ',' << it.second.unserialize_2;
         ofs << ',' << it.second.unserialize_3;

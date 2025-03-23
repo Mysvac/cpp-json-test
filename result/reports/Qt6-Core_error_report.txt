@@ -1,0 +1,53 @@
+[ test lib: Qt6-Core ]
+
+ 2. value type deserialize test......
+CPP TEST CODE FILE: F:\cpp-json-test\src\main.cpp
+CPP TEST CODE LINE: 144
+ 2. value type deserialize test faild!!!
+Exception result:FailException
+Test samples:
+ testClass->get_value_as_int64(testClass->deserialize("123456789012345")) 
+ testClass->get_value_as_string(testClass->deserialize("\"string-text-test\"")) 
+ testClass->get_value_as_bool(testClass->deserialize("true")) 
+ testClass->get_value_as_bool(testClass->deserialize("false")) 
+ testClass->value_is_null(testClass->deserialize("null")) 
+
+-----------------------------------------
+
+ 15. double_validity test.
+CPP TEST CODE FILE: F:\cpp-json-test\src\main.cpp
+CPP TEST CODE LINE: 697
+
+[ 51.161E-  ] is valid but deserialize failed.
+
+[ 0E8 ] is invalid but deserialize passed.
+
+[ .51516 ] is invalid but deserialize passed.
+
+-----------------------------------------
+
+ 16. double_accuracy test.
+CPP TEST CODE FILE: F:\cpp-json-test\src\main.cpp
+CPP TEST CODE LINE: 782
+ 16. double_accuracy test failed.
+
+-----------------------------------------
+
+ 17. string_validity escape test.
+CPP TEST CODE FILE: F:\cpp-json-test\src\main.cpp
+CPP TEST CODE LINE: 842
+ 17. string_validity test failed.
+
+-----------------------------------------
+
+ 18. error_validity test.
+CPP TEST CODE FILE: F:\cpp-json-test\src\main.cpp
+CPP TEST CODE LINE: 913
+
+ [ " 
+                        " ]  is invalid but  deserialize passed.
+
+ [ -1.E+ ]  is valid but  deserialize failed.
+
+-----------------------------------------
+

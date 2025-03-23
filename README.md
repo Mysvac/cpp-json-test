@@ -5,15 +5,16 @@ C++17 JSON解析库测试框架。
 
 使用现代C++，保证程序内存安全，跨平台。
 
-提供解析速度，浮点精度，字符串转义，语法严格性，增删改查 等多项测试内容。
+提供 **解析速度，内存占用，浮点精度，字符串转义，语法严格性，增删改查** 等多项测试内容。
 
 提供测试报告和结果数据表格，提供工具生成测试对比图。
 
 ## 项目说明
 ### 基本说明
-1. 框架采用C++17，框架本身没有第三方库依赖。
+1. 框架采用C++17，框架本身仅依赖标准库和`boost-process`。
 2. 项目构建使用`CMake`，搭配`CMakePreset`，完全跨平台。
 3. 第三方库管理，默认使用`vcpkg`，可以自行修改`CMakePreset`调整。
+4. 内存测试依赖`boost-process`，可以修改`CMakeLists.txt`关闭内存测试，关闭后不再依赖`boost-process`。
 
 ### 工作原理概要
 `model_class.h`中定义了一个`TestBase`类，是测试类的接口。程序通过这个类的对象，调用内部函数，进行测试。
@@ -21,6 +22,10 @@ C++17 JSON解析库测试框架。
 `model_class.h`中声明了一个全局单例，存储全部测试类的实例对象。末尾提供了一个宏，用于注册测试类，也就是自动生成测试类的实例对象，并放入这个单例。
 
 主函数会获取这个单例，遍历内部的所有对象，并通过统一的测试内容进行测试，最后输出错误报告和统计表格。
+
+内存测试通过`PROJECT_USE_BOOST_PROCESS`宏控制，如果此宏被定义，则导入`boost-process`库并进行内存测试。<br>
+可以修改`CMakeLists.txt`，删除相关的 库导入和宏定义 来删除此宏。 关闭后程序不将再依赖`boost-process`库，无需下载。<nr>
+（不进行内存测试，但正常进行其他测试。）
 
 注：如果`test_codes/`下没有测试类文件，也就没有注册任何测试类。 主程序依然能正常运行，但是输出的报告中不含任何测试结果。
 
@@ -67,6 +72,7 @@ cmake --build --preset <build-preset-name>
 3. `test_codes/`文件夹即使全删，程序依然能正常运行，不想要什么测试，删了就行。
 4. Qt不建议使用vcpkg安装，请使用CMake预设指定本机中QT的位置。还需要手动复制动态库文件，才能运行。
 5. `custom-overlay/`文件夹，存放的是自定义vcpkg库目标，用于安装`cpp-jsonlib`库，不需要的话可以删除。
+6. 内存测试依赖`boost-process`库。如果修改了`CMakeLists.txt`关闭了内存测试，记得vcpkg也删除相关依赖。
 
 ## 效果例图
 目前仅比较4个库，各有优劣（O2优化）：
@@ -78,6 +84,7 @@ cmake --build --preset <build-preset-name>
 
 ![正常解析](result/example_images/正常解析测试.png)
 ![值类型支持](result/example_images/数值类型支持.png)
+![内存占用](result/example_images/内存占用.png)
 ![反序列化](result/example_images/反序列化测试.png)
 ![序列化](result/example_images/序列化测试.png)
 ![序列化美化](result/example_images/美化序列化测试.png)

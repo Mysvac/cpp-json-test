@@ -1,17 +1,27 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 import matplotlib
+import numpy as np
 import os
 
 
 def get_chart(title, xlabel, df):
 
     filtered_df = df[df[title] > -0.5]
+
+    if filtered_df.empty:
+        return
+    
     # 创建一个图形和轴
     fig, ax = plt.subplots(figsize=(16, 5))
 
+    colors = plt.cm.tab20(np.arange(len(filtered_df)))
+
     # 绘制水平条形图
-    filtered_df.set_index("库名")[title].plot(kind="barh", ax=ax)
+    bars = filtered_df.set_index("库名")[title].plot(kind="barh", ax=ax, color=colors)
+
+    for i, (value, name) in enumerate(zip(filtered_df[title], filtered_df["库名"])):
+        ax.text(value, i, f" {value:.2f}", va="center", ha="left", fontsize=12)
 
     # 设置标题和标签
     ax.set_title(title, fontsize=16)
@@ -22,6 +32,7 @@ def get_chart(title, xlabel, df):
     plt.tight_layout()
     os.makedirs("images_zh", exist_ok = True)
     plt.savefig(f"./images_zh/{title}.png")
+    plt.close()
     # plt.show()
 
 if __name__ == "__main__":
@@ -37,6 +48,10 @@ if __name__ == "__main__":
     df = df.drop(columns=['validity'])
     df['数值类型支持'] = (df['value_type'] > 0.5).astype(int)
     df = df.drop(columns=['value_type'])
+
+    df['内存占用'] = df['memory']
+    df = df.drop(columns=['memory'])
+
 
     df['反序列化测试'] = (df['unserialize_1'] + 0.1 * df['unserialize_2'] + 2.*df['unserialize_3'])/1000.
     df = df.drop(columns=['unserialize_1' , 'unserialize_2', 'unserialize_3'])
@@ -72,6 +87,7 @@ if __name__ == "__main__":
 
     get_chart("正常解析测试", "能否正常解析(1/0)" , df)
     get_chart("数值类型支持", "根支持为数值类型(1/0)", df)
+    get_chart("内存占用", "反序列化对象大小(KB)", df)
     get_chart("反序列化测试", "加权耗时(毫秒)" ,df)
     get_chart("序列化测试", "加权耗时(毫秒)", df)
     get_chart("美化序列化测试", "加权耗时(毫秒)" ,df)

@@ -1,7 +1,9 @@
 {
   "dependencies": [
+    "boost-json",
     "cpp-jsonlib",
+    "jsoncpp",
     "rapidjson",
-    "jsoncpp"
+    "boost-process"
   ]
 }

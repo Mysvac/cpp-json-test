@@ -1,0 +1,40 @@
+[ test lib: cpp-jsonlib ]
+
+ 2. value type deserialize test......
+CPP TEST CODE FILE: F:\cpp-json-test\src\main.cpp
+CPP TEST CODE LINE: 144
+
+-----------------------------------------
+
+ 15. double_validity test.
+CPP TEST CODE FILE: F:\cpp-json-test\src\main.cpp
+CPP TEST CODE LINE: 697
+
+[ 01 ] is invalid but deserialize passed.
+
+[ 0E8 ] is invalid but deserialize passed.
+
+-----------------------------------------
+
+ 16. double_accuracy test.
+CPP TEST CODE FILE: F:\cpp-json-test\src\main.cpp
+CPP TEST CODE LINE: 782
+
+-----------------------------------------
+
+ 17. string_validity escape test.
+CPP TEST CODE FILE: F:\cpp-json-test\src\main.cpp
+CPP TEST CODE LINE: 842
+
+-----------------------------------------
+
+ 18. error_validity test.
+CPP TEST CODE FILE: F:\cpp-json-test\src\main.cpp
+CPP TEST CODE LINE: 913
+
+{ "123":"123", } is invalid but  deserialize passed.
+
+[123 ,123 ,] is invalid but  deserialize passed.
+
+-----------------------------------------
+
