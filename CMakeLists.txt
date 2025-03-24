@@ -17,8 +17,9 @@ set(CMAKE_CXX_FLAGS_DEBUG "/O2")
 find_package(cpp-jsonlib CONFIG REQUIRED)
 find_package(RapidJSON CONFIG REQUIRED)
 find_package(jsoncpp CONFIG REQUIRED)
+find_package(nlohmann_json CONFIG REQUIRED)
 find_package(Qt6 REQUIRED COMPONENTS Core)
-find_package(Boost REQUIRED COMPONENTS json process)
+find_package(Boost REQUIRED COMPONENTS json)
 
 ###################################################
 
@@ -48,6 +49,7 @@ target_compile_definitions(${PROJECT_NAME} PRIVATE PROJECT_USE_BOOST_PROCESS="ON
 target_link_libraries(${PROJECT_NAME} PRIVATE jsonlib::jsonlib)
 target_link_libraries(${PROJECT_NAME} PRIVATE rapidjson)
 target_link_libraries(${PROJECT_NAME} PRIVATE JsonCpp::JsonCpp)
+target_link_libraries(${PROJECT_NAME} PRIVATE nlohmann_json::nlohmann_json)
 target_link_libraries(${PROJECT_NAME} PRIVATE Qt6::Core)
 target_link_libraries(${PROJECT_NAME} PRIVATE Boost::json)
 

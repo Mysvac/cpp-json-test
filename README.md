@@ -81,15 +81,15 @@ cmake --build --preset <build-preset-name>
 ## 效果例图
 目前仅比较如下几个库，各有优劣（O2优化下）：
 1. rapidjson 操作非常繁杂，解析与操作极快，内存占用很低，性能极佳。
-2. boost-json 操作非常简单，现代，抛出异常的库，性能较好。 
+2. boost-json 操作非常简单，现代，会抛出异常，性能较好。 
 3. Qt 操作难度中等，值类型的直接解析 支持性较差，性能中等。
 4. jsoncpp 操作非常简单，现代，不抛出异常，性能略差。
-5. cpp-jsonlib 操作非常简单，现代，抛出异常的库，性能略差。 
+5. cpp-jsonlib 操作非常简单，现代，会抛出异常，性能略差。 
+6. nlogmann-json 操作非常简单，现代，会抛出异常，性能较好。
 
-![正常解析](documents/example_images/正常解析测试.png)
 ![值类型支持](documents/example_images/数值类型支持.png)
+![深层数据支持](documents/example_images/深度数据解析测试.png)
 ![内存占用](documents/example_images/内存占用.png)
-![深层数据解析](documents/example_images/深度数据解析测试.png)
 ![反序列化](documents/example_images/反序列化测试.png)
 ![序列化](documents/example_images/序列化测试.png)
 ![序列化美化](documents/example_images/美化序列化测试.png)
