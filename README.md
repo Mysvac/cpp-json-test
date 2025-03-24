@@ -15,6 +15,7 @@ C++17 JSON解析库测试框架。
 2. 项目构建使用`CMake`，搭配`CMakePreset`，完全跨平台。
 3. 第三方库管理，默认使用`vcpkg`，可以自行修改`CMakePreset`调整。
 4. 内存测试依赖`boost-process`，可以修改`CMakeLists.txt`关闭内存测试，关闭后不再依赖`boost-process`。
+5. Qt测试依赖`qtbase`，库太大，默认不下载，需要自行配置库目录。 若不需要，可删除此测试和相关依赖导入。
 
 ### 工作原理概要
 ![工作方式](documents/工作方式.png)
@@ -73,7 +74,7 @@ cmake --build --preset <build-preset-name>
 1. `test_codes/`文件夹下存放测试类代码，不会递归查询，所以`test_codes/models`内的代码不会被编译。
 2. `test_codes/`文件夹即使全删，程序依然能正常运行。不想要什么测试，删了就行。
 3. 如果删除了测试文件，记得修改`CMakeLists.txt`和`vcpkg.json`，删除项目的库依赖，不然还会下载。
-4. Qt的测试需要使用CMake预设指定本机中Qt位置，还需要手动复制动态库文件。
+4. Qt测试默认使用本地Qt，需要自行设置CMake预设，指定位置。（`qtbase`库太大，保护大量不相关内容，不推荐vcpkg下载）。
 5. `custom-overlay/`文件夹，存放的是自定义vcpkg库目标，用于安装`cpp-jsonlib`库，不需要的话可以删除。
 6. 内存测试依赖`boost-process`库。可以修改`CMakeLists.txt`关闭内存测试，关闭后无需此库。
 
