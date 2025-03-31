@@ -889,11 +889,15 @@ int main(){
                     try{
                         if(std::string{ "this is a\u03B1string"} == testClass->get_value_as_string(testClass->deserialize( R"_("this is a\u03B1string")_" ))){testScore.string_validity += 5;}
                         else{  ofs << '\n' << "Wrong: The parsing result of <\"this is a\\u03B1string\"> is not equal to <this is a\u03B1string>." << std::endl; }
-                    }catch(...){}
+                    }catch(...){
+                        ofs << '\n' << "error: The parsing string value of <\"this is a\\u03B1string\"> failed." << std::endl;
+                    }
                     try{
                         if(std::string{ "this is a😊string"} == testClass->get_value_as_string(testClass->deserialize( R"_("this is a\uD83D\uDE0Astring")_" ))){testScore.string_validity += 5;}
-                        else{  ofs << '\n' << "Wrong: The parsing result of <\"this is a\\uD83D\\uDE0Astring\"> is not equal to <this is a😊string>." << std::endl; }
-                    }catch(...){}
+                        else{  ofs << '\n' << "Wrong: The parsing string value of <\"this is a\\uD83D\\uDE0Astring\"> failed." << std::endl; }
+                    }catch(...){
+                        ofs << '\n' << "error: The parsing string of <\"this is a\\uD83D\\uDE0Astring\"> is not equal to <this is a😊string>." << std::endl;
+                    }
                     std::cout << '\r' << libName << " >> string validity score: " << testScore.string_validity << "/100" << std::string(10, ' ') << std::endl;
                 }
                 catch(const NotSupportException& e){

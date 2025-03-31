@@ -14,7 +14,7 @@
 class CppJsonlibObj : public JsonBase{
 public:
     // 存放库中JSON可操作对象的类型
-    Json::JsonBasic json;
+    Jsonlib::JsonValue json;
 };
     
 //// 1.2. 重写StringBase类，内部存放你的库的字符串类。如果支持std::string,就直接使用std::string.
@@ -49,39 +49,37 @@ boolenNum : 全体元素中，bool类型的数量
 nullNum : 全体元素中，null的数量
 */ 
 // 例：
-static void get_element_num(const Json::JsonBasic& jsonBasic, JsonCounter& counter){
-    switch (jsonBasic.type())
+static void get_element_num(const Jsonlib::JsonValue& json, JsonCounter& counter){
+    switch (json.type())
     {
-    case Json::JsonType::OBJECT:
+    case Jsonlib::JsonType::OBJECT:
         {
-            const Json::JsonBasic::Map& map = jsonBasic.getMapConst();
-            for(const auto& it : map){
+            for(const auto& it : json.as_object()){
                 get_element_num(it.second, counter);
                 counter.objectChildNum += 1;
             }
             counter.objectNum += 1;
         }
         break;
-    case Json::JsonType::ARRAY:
+    case Jsonlib::JsonType::ARRAY:
         {
-            const Json::JsonBasic::List& list = jsonBasic.getListConst();
-            for(const auto& it : list){
+            for(const auto& it : json.as_array()){
                 get_element_num(it, counter);
                 counter.arrayChildNum += 1;
             }
             counter.arrayNum += 1;
         }
         break;
-    case Json::JsonType::STRING:
+    case Jsonlib::JsonType::STRING:
         counter.stringNum += 1;
         break;
-    case Json::JsonType::NUMBER:
+    case Jsonlib::JsonType::NUMBER:
         counter.numberNum += 1;
         break;
-    case Json::JsonType::BOOLEN:
+    case Jsonlib::JsonType::BOOLEN:
         counter.boolenNum += 1;
         break;
-    case Json::JsonType::ISNULL:
+    case Jsonlib::JsonType::ISNULL:
         counter.nullNum += 1;
         break;
     }
@@ -110,7 +108,7 @@ class CppJsonlibTest : public TestBase{
         auto json_ptr = std::make_shared<CppJsonlibObj>();
         try{
             // 用 JSON子类指针 内部的 JSON数据对象 反序列化字符串
-            json_ptr->json = Json::JsonBasic {str};
+            json_ptr->json = Jsonlib::JsonValue {str};
         }catch(...){ 
             // 转换失败时，务必抛出 FailException异常
             throw FailException {}; 

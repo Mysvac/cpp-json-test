@@ -1,91 +1,132 @@
 {
     "version": 5,
     "cmakeMinimumRequired": {
-      "major": 3,
-      "minor": 24,
-      "patch": 0
+        "major": 3,
+        "minor": 24,
+        "patch": 0
     },
     "configurePresets": [
-      {
-        "hidden": true,
-        "name": "config-base",
-        "generator": "Ninja",
-        "binaryDir": "${sourceDir}/build/",
-        "installDir": "${sourceDir}/build/"
-      },
-      {
-        "name": "win-x64-debug",
-        "displayName": "win debug",
-        "inherits": "config-base",
-        "cacheVariables": {
-          "CMAKE_TOOLCHAIN_FILE": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake",
-          "VCPKG_OVERLAY_PORTS": "${sourceDir}/custom-overlay/cpp-jsonlib",
-          "VCPKG_MANIFEST_MODE": "ON",
-          "CMAKE_BUILD_TYPE": "Debug",
-          "CMAKE_CXX_COMPILER": "cl.exe",
-          "CMAKE_C_COMPILER": "cl.exe"
+        {
+            "hidden": true,
+            "name": "config-base",
+            "generator": "Ninja Multi-Config",
+            "binaryDir": "${sourceDir}/build/",
+            "installDir": "${sourceDir}/build/"
         },
-        "architecture": {
-          "value": "x64",
-          "strategy": "external"
+        {
+            "name": "win-config",
+            "displayName": "win",
+            "inherits": "config-base",
+            "cacheVariables": {
+                "CMAKE_TOOLCHAIN_FILE": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake",
+                "VCPKG_OVERLAY_PORTS": "${sourceDir}/custom-overlay/cpp-jsonlib",
+                "VCPKG_MANIFEST_MODE": "ON",
+                "CMAKE_CONFIGURATION_TYPES": "Debug;Release",
+                "CMAKE_CXX_COMPILER": "cl.exe",
+                "CMAKE_C_COMPILER": "cl.exe"
+            },
+            "architecture": {
+                "value": "x64",
+                "strategy": "external"
+            },
+            "condition": {
+                "type": "equals",
+                "lhs": "${hostSystemName}",
+                "rhs": "Windows"
+            }
         },
-        "condition": {
-            "type": "equals",
-            "lhs": "${hostSystemName}",
-            "rhs": "Windows"
+        {
+            "name": "linux-config",
+            "displayName": "Linux",
+            "inherits": "config-base",
+            "cacheVariables": {
+                "CMAKE_TOOLCHAIN_FILE": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake",
+                "VCPKG_OVERLAY_PORTS": "${sourceDir}/custom-overlay/cpp-jsonlib",
+                "VCPKG_MANIFEST_MODE": "ON",
+                "CMAKE_CONFIGURATION_TYPES": "Debug;Release"
+            },
+            "condition": {
+                "type": "equals",
+                "lhs": "${hostSystemName}",
+                "rhs": "Linux"
+            }
+        },
+        {
+            "name": "macOS-config",
+            "displayName": "macOS",
+            "inherits": "config-base",
+            "cacheVariables": {
+                "CMAKE_TOOLCHAIN_FILE": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake",
+                "VCPKG_OVERLAY_PORTS": "${sourceDir}/custom-overlay/cpp-jsonlib",
+                "VCPKG_MANIFEST_MODE": "ON",
+                "CMAKE_CONFIGURATION_TYPES": "Debug;Release"
+            },
+            "condition": {
+                "type": "equals",
+                "lhs": "${hostSystemName}",
+                "rhs": "Darwin"
+            }
+        },
+        {
+            "name": "Configure preset using toolchain file",
+            "displayName": "Configure preset using toolchain file",
+            "description": "Sets Ninja generator, build and install directory",
+            "generator": "Ninja",
+            "binaryDir": "${sourceDir}/out/build/${presetName}",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Debug",
+                "CMAKE_TOOLCHAIN_FILE": "",
+                "CMAKE_INSTALL_PREFIX": "${sourceDir}/out/install/${presetName}"
+            }
+        },
+        {
+            "name": "Custom configure preset",
+            "displayName": "Custom configure preset",
+            "description": "Sets Ninja generator, build and install directory",
+            "generator": "Ninja",
+            "binaryDir": "${sourceDir}/out/build/${presetName}",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Debug",
+                "CMAKE_INSTALL_PREFIX": "${sourceDir}/out/install/${presetName}"
+            }
         }
-      },
-      {
-        "name": "linux-debug",
-        "displayName": "Linux Debug",
-        "inherits": "config-base",
-        "cacheVariables": {
-          "CMAKE_TOOLCHAIN_FILE": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake",
-          "VCPKG_OVERLAY_PORTS": "${sourceDir}/custom-overlay/cpp-jsonlib",
-          "VCPKG_MANIFEST_MODE": "ON",
-          "CMAKE_BUILD_TYPE": "Debug"
-        },
-        "condition": {
-            "type": "equals",
-            "lhs": "${hostSystemName}",
-            "rhs": "Linux"
-        }
-      },
-      {
-          "name": "macOS-debug",
-          "displayName": "macOS Debug",
-          "inherits": "config-base",
-          "cacheVariables": {
-            "CMAKE_TOOLCHAIN_FILE": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake",
-            "VCPKG_OVERLAY_PORTS": "${sourceDir}/custom-overlay/cpp-jsonlib",
-            "VCPKG_MANIFEST_MODE": "ON",
-            "CMAKE_BUILD_TYPE": "Debug"
-          },
-          "condition": {
-              "type": "equals",
-              "lhs": "${hostSystemName}",
-              "rhs": "Darwin"
-          }
-      }
     ],
     "buildPresets": [
         {
-        "name": "win-x64-build",
-        "displayName": "win Build Debug",
-        "configurePreset": "win-x64-debug",
-        "configuration": "Debug"
+            "name": "win-x64-debug",
+            "displayName": "win Build Debug",
+            "configurePreset": "win-config",
+            "configuration": "Debug"
         },
         {
-          "name": "linux-build",
-          "displayName": "linux Build Debug",
-          "configurePreset": "linux-debug",
-          "configuration": "Debug"
+            "name": "linux-debug",
+            "displayName": "linux Build Debug",
+            "configurePreset": "linux-config",
+            "configuration": "Debug"
         },
         {
-          "name": "macOS-build",
-          "displayName": "macOS Build Debug",
-          "configurePreset": "macOS-debug",
-          "configuration": "Debug"
+            "name": "macOS-debug",
+            "displayName": "macOS Build Debug",
+            "configurePreset": "macOS-config",
+            "configuration": "Debug"
+        },
+        {
+            "name": "win-x64-release",
+            "displayName": "win Build release",
+            "configurePreset": "win-config",
+            "configuration": "Release"
+        },
+        {
+            "name": "linux-release",
+            "displayName": "linux Build release",
+            "configurePreset": "linux-config",
+            "configuration": "Release"
+        },
+        {
+            "name": "macOS-release",
+            "displayName": "macOS Build release",
+            "configurePreset": "macOS-config",
+            "configuration": "Release"
         }
     ]
 }

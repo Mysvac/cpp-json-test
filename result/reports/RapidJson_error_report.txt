@@ -36,7 +36,7 @@ CPP TEST CODE LINE: 847
 
  18. error_validity test.
 CPP TEST CODE FILE: F:\cpp-json-test\src\main.cpp
-CPP TEST CODE LINE: 918
+CPP TEST CODE LINE: 922
 
  [ -1.E+ ]  is valid but  deserialize failed.
 

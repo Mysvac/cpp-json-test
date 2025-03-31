@@ -56,7 +56,7 @@ TestBase的子类，也就是各库的测试代码文件，统一放在`test_cod
 cmake --preset <configure-preset-name>
 cmake --build --preset <build-preset-name>
 ```
-就能配置和生成。（推荐Debug模式，没必要Release。）
+就能配置和生成。（推荐Release模式，Debug模式下栈空间消耗大，深层递归解析测试可能失败。）
 
 ### 使用测试结果
 前置： 完成上述步骤并运行可执行程序。
@@ -79,7 +79,7 @@ cmake --build --preset <build-preset-name>
 6. 内存测试依赖`boost-process`库。可以修改`CMakeLists.txt`关闭内存测试，关闭后无需此库。
 
 ## 效果例图
-目前仅比较如下几个库，各有优劣（O2优化下）：
+目前仅比较如下几个库，各有优劣（Release下）：
 1. rapidjson 操作非常繁杂，解析与操作极快，内存占用很低，性能极佳。
 2. boost-json 操作非常简单，现代，会抛出异常，性能较好。 
 3. Qt 操作难度中等，值类型的直接解析 支持性较差，性能中等。
