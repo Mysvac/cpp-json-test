@@ -231,7 +231,7 @@ int main(){
 
             // 3. big_normal.json 反序列化测试 较大的文本内容为主的文件
             try{
-                std::cout << libName << " >> unserialize (1) testing......"  << std::flush;
+                std::cout << libName << " >> deserialize (1) testing......"  << std::flush;
                 auto begin = std::chrono::system_clock::now();
 
                 json_ptr_1 =  testClass->deserialize(big_normal);
@@ -239,30 +239,30 @@ int main(){
                 auto end = std::chrono::system_clock::now();
                 auto micros = std::chrono::duration_cast<std::chrono::microseconds>(end-begin);
                 testScore.unserialize_1 = micros.count();
-                std::cout << '\r' << libName << " >> unserialize (1) passed: " << micros.count()/1000ll << "." << micros.count()%1000ll  << " ms" << std::string(10, ' ')<< std::endl;
+                std::cout << '\r' << libName << " >> deserialize (1) passed: " << micros.count()/1000ll << "." << micros.count()%1000ll  << " ms" << std::string(10, ' ')<< std::endl;
             }
             catch(const NotSupportException& e){
                 testScore.unserialize_1 = -1;
-                ofs << " 3. unserialize (1) test not support." << std::endl;
+                ofs << " 3. deserialize (1) test not support." << std::endl;
                 ofs << " file: json_test_files/big_normal.json " << std::endl;
                 ofs << "CPP TEST CODE FILE: " << __FILE__ << std::endl;
                 ofs << "CPP TEST CODE LINE: " << std::to_string(__LINE__) << std::endl;
                 ofs << "\n-----------------------------------------\n" << std::endl;
-                std::cerr << '\r' << libName << " >> unserialize (1) not support." << std::string(20, ' ') << std::endl;
+                std::cerr << '\r' << libName << " >> deserialize (1) not support." << std::string(20, ' ') << std::endl;
             }
             catch(...){
                 testScore.unserialize_1 = -2;
-                ofs << " 3. unserialize (1) test failed." << std::endl;
+                ofs << " 3. deserialize (1) test failed." << std::endl;
                 ofs << " file: json_test_files/big_normal.json " << std::endl;
                 ofs << "CPP TEST CODE FILE: " << __FILE__ << std::endl;
                 ofs << "CPP TEST CODE LINE: " << std::to_string(__LINE__) << std::endl;
                 ofs << "\n-----------------------------------------\n" << std::endl;
-                std::cerr << '\r' << libName << " >> unserialize (1) failed." << std::string(20, ' ') << std::endl;
+                std::cerr << '\r' << libName << " >> deserialize (1) failed." << std::string(20, ' ') << std::endl;
             }
 
             // 4. big_doubles.json 反序列化测试 包含大量数值类型的文件
             try{
-                std::cout << libName << " >> unserialize (2) testing......"  << std::flush;
+                std::cout << libName << " >> deserialize (2) testing......"  << std::flush;
                 auto begin = std::chrono::system_clock::now();
 
                 json_ptr_2 =  testClass->deserialize(big_double);
@@ -270,30 +270,30 @@ int main(){
                 auto end = std::chrono::system_clock::now();
                 auto micros = std::chrono::duration_cast<std::chrono::microseconds>(end-begin);
                 testScore.unserialize_2 = micros.count();
-                std::cout << '\r' << libName << " >> unserialize (2) passed: " << micros.count()/1000ll << "." << micros.count()%1000ll  << " ms" << std::string(10, ' ')<< std::endl;
+                std::cout << '\r' << libName << " >> deserialize (2) passed: " << micros.count()/1000ll << "." << micros.count()%1000ll  << " ms" << std::string(10, ' ')<< std::endl;
             }
             catch(const NotSupportException& e){
                 testScore.unserialize_2 = -1;
-                ofs << " 4. unserialize (2) test not support." << std::endl;
+                ofs << " 4. deserialize (2) test not support." << std::endl;
                 ofs << " file: json_test_files/big_double.json " << std::endl;
                 ofs << "CPP TEST CODE FILE: " << __FILE__ << std::endl;
                 ofs << "CPP TEST CODE LINE: " << std::to_string(__LINE__) << std::endl;
                 ofs << "\n-----------------------------------------\n" << std::endl;
-                std::cerr << '\r' << libName << " >> unserialize (2) not support." << std::string(20, ' ') << std::endl;
+                std::cerr << '\r' << libName << " >> deserialize (2) not support." << std::string(20, ' ') << std::endl;
             }
             catch(...){
                 testScore.unserialize_2 = -2;
-                ofs << " 4. unserialize (2) test failed." << std::endl;
+                ofs << " 4. deserialize (2) test failed." << std::endl;
                 ofs << " file: json_test_files/big_double.json " << std::endl;
                 ofs << "CPP TEST CODE FILE: " << __FILE__ << std::endl;
                 ofs << "CPP TEST CODE LINE: " << std::to_string(__LINE__) << std::endl;
                 ofs << "\n-----------------------------------------\n" << std::endl;
-                std::cerr << '\r' << libName << " >> unserialize (2) failed." << std::string(20, ' ') << std::endl;
+                std::cerr << '\r' << libName << " >> deserialize (2) failed." << std::string(20, ' ') << std::endl;
             }
 
             // 5. big_nesting 反序列化测试 含有较深层次的文件，内容较少
             try{
-                std::cout << libName << " >> unserialize (3) testing......"  << std::flush;
+                std::cout << libName << " >> deserialize (3) testing......"  << std::flush;
                 auto begin = std::chrono::system_clock::now();
 
                 json_ptr_3 =  testClass->deserialize(big_nesting);
@@ -301,25 +301,25 @@ int main(){
                 auto end = std::chrono::system_clock::now();
                 auto micros = std::chrono::duration_cast<std::chrono::microseconds>(end-begin);
                 testScore.unserialize_3 = micros.count();
-                std::cout << '\r' << libName << " >> unserialize (3) passed: " << micros.count()/1000ll << "." << micros.count()%1000ll  << " ms" << std::string(1, ' ')<< std::endl;
+                std::cout << '\r' << libName << " >> deserialize (3) passed: " << micros.count()/1000ll << "." << micros.count()%1000ll  << " ms" << std::string(1, ' ')<< std::endl;
             }
             catch(const NotSupportException& e){
                 testScore.unserialize_3 = -1;
-                ofs << " 5. unserialize (3) test not support." << std::endl;
+                ofs << " 5. deserialize (3) test not support." << std::endl;
                 ofs << " file: json_test_files/big_nesting.json " << std::endl;
                 ofs << "CPP TEST CODE FILE: " << __FILE__ << std::endl;
                 ofs << "CPP TEST CODE LINE: " << std::to_string(__LINE__) << std::endl;
                 ofs << "\n-----------------------------------------\n" << std::endl;
-                std::cerr << '\r' << libName << " >> unserialize (3) not support." << std::string(20, ' ') << std::endl;
+                std::cerr << '\r' << libName << " >> deserialize (3) not support." << std::string(20, ' ') << std::endl;
             }
             catch(...){
                 testScore.unserialize_3 = -2;
-                ofs << " 5. unserialize (3) test not support." << std::endl;
+                ofs << " 5. deserialize (3) test not support." << std::endl;
                 ofs << " file: json_test_files/big_nesting.json " << std::endl;
                 ofs << "CPP TEST CODE FILE: " << __FILE__ << std::endl;
                 ofs << "CPP TEST CODE LINE: " << std::to_string(__LINE__) << std::endl;
                 ofs << "\n-----------------------------------------\n" << std::endl;
-                std::cerr << '\r' << libName << " >> unserialize (3) failed." << std::string(20, ' ') << std::endl;
+                std::cerr << '\r' << libName << " >> deserialize (3) failed." << std::string(20, ' ') << std::endl;
             }
 
             // 6. big_normal.json 序列化测试 较大的文本内容为主的文件
