@@ -108,7 +108,7 @@ class CppJsonlibTest : public TestBase{
         auto json_ptr = std::make_shared<CppJsonlibObj>();
         try{
             // 用 JSON子类指针 内部的 JSON数据对象 反序列化字符串
-            json_ptr->json = Jsonlib::JsonValue {str};
+            json_ptr->json = Jsonlib::deserialize(str);
         }catch(...){ 
             // 转换失败时，务必抛出 FailException异常
             throw FailException {}; 
