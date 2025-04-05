@@ -9,7 +9,6 @@ project(cpp-json-test
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_CXX_FLAGS_DEBUG "/O2")
 
 ###################################################
 # 各种JSON库，不需要的可以删除

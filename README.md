@@ -11,11 +11,10 @@ C++17 JSON解析库测试框架。
 
 ## 项目介绍
 ### 基本说明
-1. 框架采用C++17，框架本身仅依赖标准库和`boost-process`。
+1. 框架采用C++17，框架本身仅依赖标准库。
 2. 项目构建使用`CMake`，搭配`CMakePreset`，完全跨平台。
 3. 第三方库管理，默认使用`vcpkg`，可以自行修改`CMakePreset`调整。
-4. 内存测试依赖`boost-process`，可以修改`CMakeLists.txt`关闭内存测试，关闭后不再依赖`boost-process`。
-5. Qt测试依赖`qtbase`，库太大，默认不下载，需要自行配置库目录。 若不需要，可删除此测试和相关依赖导入。
+4. Qt测试依赖`qtbase`，库太大，默认不下载，需要自行配置库目录。 若不需要，可删除此测试和相关依赖导入。
 
 ### 工作原理概要
 ![工作方式](documents/工作方式.png)
@@ -69,16 +68,17 @@ cmake --build --preset <build-preset-name>
 2. `test_codes/`文件夹即使全删，程序依然能正常运行。不想要什么测试，删了就行。
 3. 如果删除了测试文件，记得修改`CMakeLists.txt`和`vcpkg.json`，删除项目的库依赖，不然还会下载。
 4. Qt测试默认使用本地Qt，需要自行设置CMake预设，指定位置。（`qtbase`库太大，保护大量不相关内容，不推荐vcpkg下载）。
-5. `custom-overlay/`文件夹，存放的是自定义vcpkg库目标，用于安装`mysvac-jsonlib`库，不需要的话可以删除。
+5. 如果测试QtJson，执行时需要Qt6Core.dll动态库文件，需要自己复制本地的dll文件到目标文件夹。<br>
+    `documents`文件夹下提供了Qt6Core.dll动态库文件，由于版本问题，不一定能够兼容。推荐使用自己的文件。
 
 ## 效果例图
 目前仅比较如下几个库，各有优劣（Release下）：
 1. rapidjson 操作非常繁杂，解析与操作极快，内存占用很低，性能极佳。
 2. boost-json 操作简单，现代，会抛出异常，性能极佳。 
-3. Qt 操作难度中等，值类型的直接解析 支持性较差，性能中等。
-4. jsoncpp 操作非常简单，现代，不抛出异常，性能略差。
-5. mysvac-jsonlib 操作非常简单，现代，会抛出异常，性能略差。 
-6. nlogmann-json 操作非常简单，现代，会抛出异常，性能较好。
+3. Qt 操作难度中等，值类型的直接解析 支持性较差，性能中等，修改元素较慢，库很大。
+4. mysvac-jsonlib 操作非常简单，现代，会抛出异常，性能中等，序列化较慢，库很小。 
+5. nlogmann-json 操作非常简单，现代，会抛出异常，性能中等。
+6. jsoncpp 操作非常简单，现代，不抛出异常，性能略差。
 
 ![值类型支持](documents/example_images/数值类型支持.png)
 ![深层数据支持](documents/example_images/深度数据解析测试.png)

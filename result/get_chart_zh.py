@@ -59,23 +59,23 @@ if __name__ == "__main__":
 
 
 
-    df['反序列化测试'] = (df['unserialize_1'] + 0.12 * df['unserialize_2']) / 1000.
+    df['反序列化测试'] = (df['unserialize_1'] + 0.2 * df['unserialize_2']) / 500.
     df = df.drop(columns=['unserialize_1' , 'unserialize_2', 'unserialize_3'])
 
-    df['序列化测试'] = (df['serialize_1'] + 0.12 * df['serialize_2']) / 1000.
+    df['序列化测试'] = (df['serialize_1'] + 0.2 * df['serialize_2']) / 500.
     df = df.drop(columns=['serialize_1' , 'serialize_2', 'serialize_3'])
 
-    df['美化序列化测试'] = (df['prettify_1'] + 0.12 * df['prettify_2']) / 1000.
+    df['美化序列化测试'] = (df['prettify_1'] + 0.2 * df['prettify_2']) / 500.
     df = df.drop(columns=['prettify_1' , 'prettify_2', 'prettify_3'])
 
-    df['获取子元素测试'] = df['get_child'] / 1000.
+    df['获取子元素测试'] = df['get_child'] / 250.
 
-    df['增加子元素测试'] = df['add_child'] / 1000.
+    df['增加子元素测试'] = df['add_child'] / 250.
 
-    df['删除子元素测试'] = df['delete_child'] / 1000.
+    df['删除子元素测试'] = df['delete_child'] / 250.
 
 
-    df['增删改查加权测试'] = (df['get_child'] * 0.6 + df['add_child']*0.25 + df['delete_child']*0.15 )  / 1000.
+    df['增删改查加权测试'] = (df['get_child'] * 0.6 + df['add_child']*0.25 + df['delete_child']*0.15 )  / 250.
     df = df.drop(columns=['get_child' , 'add_child', 'delete_child'])
 
     df['数值格式支持测试'] = df['double_validity'].astype(int)

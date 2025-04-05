@@ -19,7 +19,6 @@
             "inherits": "config-base",
             "cacheVariables": {
                 "CMAKE_TOOLCHAIN_FILE": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake",
-                "VCPKG_OVERLAY_PORTS": "${sourceDir}/custom-overlay/mysvac-jsonlib",
                 "VCPKG_MANIFEST_MODE": "ON",
                 "CMAKE_CONFIGURATION_TYPES": "Debug;Release",
                 "CMAKE_CXX_COMPILER": "cl.exe",
@@ -41,7 +40,6 @@
             "inherits": "config-base",
             "cacheVariables": {
                 "CMAKE_TOOLCHAIN_FILE": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake",
-                "VCPKG_OVERLAY_PORTS": "${sourceDir}/custom-overlay/mysvac-jsonlib",
                 "VCPKG_MANIFEST_MODE": "ON",
                 "CMAKE_CONFIGURATION_TYPES": "Debug;Release"
             },
@@ -57,7 +55,6 @@
             "inherits": "config-base",
             "cacheVariables": {
                 "CMAKE_TOOLCHAIN_FILE": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake",
-                "VCPKG_OVERLAY_PORTS": "${sourceDir}/custom-overlay/mysvac-jsonlib",
                 "VCPKG_MANIFEST_MODE": "ON",
                 "CMAKE_CONFIGURATION_TYPES": "Debug;Release"
             },
