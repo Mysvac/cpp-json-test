@@ -27,12 +27,6 @@ TestBase的子类，也就是各库的测试代码文件，统一放在`test_cod
 
 注：若`test_codes/`下没有任何文件，也就没有注册任何测试类。 主程序依然能正常运行，但是输出的报告中不含任何测试结果。
 
-### 内存测试说明
-内存测试依赖`boost-process`库。
-
-内存测试可以通过`CMakeLists.txt`中设置的`PROJECT_USE_BOOST_PROCESS`宏进行控制。<br>
-如果此宏未定义，则不进行内存测试，则不依赖`boost-process`库，无需下载（其他测试正常进行）。
-
 
 ### 如何导入新的库
 下面提供3种方式：
@@ -75,8 +69,7 @@ cmake --build --preset <build-preset-name>
 2. `test_codes/`文件夹即使全删，程序依然能正常运行。不想要什么测试，删了就行。
 3. 如果删除了测试文件，记得修改`CMakeLists.txt`和`vcpkg.json`，删除项目的库依赖，不然还会下载。
 4. Qt测试默认使用本地Qt，需要自行设置CMake预设，指定位置。（`qtbase`库太大，保护大量不相关内容，不推荐vcpkg下载）。
-5. `custom-overlay/`文件夹，存放的是自定义vcpkg库目标，用于安装`cpp-jsonlib`库，不需要的话可以删除。
-6. 内存测试依赖`boost-process`库。可以修改`CMakeLists.txt`关闭内存测试，关闭后无需此库。
+5. `custom-overlay/`文件夹，存放的是自定义vcpkg库目标，用于安装`mysvac-jsonlib`库，不需要的话可以删除。
 
 ## 效果例图
 目前仅比较如下几个库，各有优劣（Release下）：
