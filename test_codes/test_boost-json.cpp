@@ -113,7 +113,7 @@ class BoostJsonTest : public TestBase{
         // 定义 第1步 定义的 JSON子类指针
         auto json_ptr = std::make_shared<BoostJsonObj>();
         try{
-            boost::json::error_code ec;
+            boost::system::error_code ec;
             json_ptr->json = boost::json::parse(str, ec);
             // 用 JSON子类指针 内部的 JSON数据对象 反序列化字符串
             if(ec) throw FailException {}; 

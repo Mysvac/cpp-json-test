@@ -6,44 +6,44 @@ CPP TEST CODE LINE: 149
 
 -----------------------------------------
 
- 5. unserialize (3) test not support.
+ 5. deserialize (3) test not support.
  file: json_test_files/big_nesting.json 
 CPP TEST CODE FILE: F:\cpp-json-test\src\main.cpp
-CPP TEST CODE LINE: 320
+CPP TEST CODE LINE: 316
 
 -----------------------------------------
 
  8. serialize (3) test failed.
  file: json_test_files/big_nesting.json 
 CPP TEST CODE FILE: F:\cpp-json-test\src\main.cpp
-CPP TEST CODE LINE: 419
+CPP TEST CODE LINE: 415
 
 -----------------------------------------
 
  9. serialize_pretty (1) test not support.
  file: json_test_files/big_normal.json 
 CPP TEST CODE FILE: F:\cpp-json-test\src\main.cpp
-CPP TEST CODE LINE: 441
+CPP TEST CODE LINE: 437
 
 -----------------------------------------
 
  10. serialize_pretty (2) test not support.
  file: json_test_files/big_double.json 
 CPP TEST CODE FILE: F:\cpp-json-test\src\main.cpp
-CPP TEST CODE LINE: 472
+CPP TEST CODE LINE: 468
 
 -----------------------------------------
 
  11. serialize_pretty (3) test failed.
  file: json_test_files/big_nesting.json 
 CPP TEST CODE FILE: F:\cpp-json-test\src\main.cpp
-CPP TEST CODE LINE: 512
+CPP TEST CODE LINE: 508
 
 -----------------------------------------
 
  15. double_validity test.
 CPP TEST CODE FILE: F:\cpp-json-test\src\main.cpp
-CPP TEST CODE LINE: 702
+CPP TEST CODE LINE: 698
 
 [ 51161. ] is valid but deserialize failed.
 
@@ -59,19 +59,19 @@ CPP TEST CODE LINE: 702
 
  16. double_accuracy test.
 CPP TEST CODE FILE: F:\cpp-json-test\src\main.cpp
-CPP TEST CODE LINE: 787
+CPP TEST CODE LINE: 783
 
 -----------------------------------------
 
  17. string_validity escape test.
 CPP TEST CODE FILE: F:\cpp-json-test\src\main.cpp
-CPP TEST CODE LINE: 847
+CPP TEST CODE LINE: 843
 
 -----------------------------------------
 
  18. error_validity test.
 CPP TEST CODE FILE: F:\cpp-json-test\src\main.cpp
-CPP TEST CODE LINE: 922
+CPP TEST CODE LINE: 918
 
  [ -1.E+ ]  is valid but  deserialize failed.
 

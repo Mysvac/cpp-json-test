@@ -202,25 +202,21 @@ int main(){
                 std::cerr << '\r' << libName << " >> JSON value type failed." << std::string(20, ' ') << std::endl;
             }
         
-            #ifdef PROJECT_USE_BOOST_PROCESS
+
 
             std::this_thread::sleep_for(std::chrono::seconds(1));
             base_memory_KB = get_memory_usage_KB();
         
-            #endif
+
         }
 
-        #ifdef PROJECT_USE_BOOST_PROCESS
+
 
         std::this_thread::sleep_for(std::chrono::seconds(1));
         testScore.memory = base_memory_KB - get_memory_usage_KB();
         std::cout << libName << " >> memory used:" << testScore.memory << " K" << std::string(15, ' ') << std::endl;
 
-        #elif
 
-        std::cout << "memory test not support: PROJECT_USE_BOOST_PROCESS is not open" << std::endl;
-    
-        #endif
 
         // 3-11. unserialize and serialize speed test 反序列化与序列化测速
         {

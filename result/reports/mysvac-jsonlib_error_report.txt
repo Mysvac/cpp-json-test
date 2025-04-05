@@ -1,0 +1,43 @@
+[ test lib: mysvac-jsonlib ]
+
+ 2. value type deserialize test......
+CPP TEST CODE FILE: F:\cpp-json-test\src\main.cpp
+CPP TEST CODE LINE: 149
+
+-----------------------------------------
+
+ 15. double_validity test.
+CPP TEST CODE FILE: F:\cpp-json-test\src\main.cpp
+CPP TEST CODE LINE: 698
+
+[ 01 ] is invalid but deserialize passed.
+
+[ 0E8 ] is invalid but deserialize passed.
+
+-----------------------------------------
+
+ 16. double_accuracy test.
+CPP TEST CODE FILE: F:\cpp-json-test\src\main.cpp
+CPP TEST CODE LINE: 783
+
+-----------------------------------------
+
+ 17. string_validity escape test.
+CPP TEST CODE FILE: F:\cpp-json-test\src\main.cpp
+CPP TEST CODE LINE: 843
+
+-----------------------------------------
+
+ 18. error_validity test.
+CPP TEST CODE FILE: F:\cpp-json-test\src\main.cpp
+CPP TEST CODE LINE: 918
+
+{ "123":"123", } is invalid but  deserialize passed.
+
+[123 ,123 ,] is invalid but  deserialize passed.
+
+ [ " 
+                        " ]  is invalid but  deserialize passed.
+
+-----------------------------------------
+

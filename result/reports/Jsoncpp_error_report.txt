@@ -8,7 +8,7 @@ CPP TEST CODE LINE: 149
 
  15. double_validity test.
 CPP TEST CODE FILE: F:\cpp-json-test\src\main.cpp
-CPP TEST CODE LINE: 702
+CPP TEST CODE LINE: 698
 
 [ 51.161E-  ] is valid but deserialize failed.
 
@@ -20,19 +20,19 @@ CPP TEST CODE LINE: 702
 
  16. double_accuracy test.
 CPP TEST CODE FILE: F:\cpp-json-test\src\main.cpp
-CPP TEST CODE LINE: 787
+CPP TEST CODE LINE: 783
 
 -----------------------------------------
 
  17. string_validity escape test.
 CPP TEST CODE FILE: F:\cpp-json-test\src\main.cpp
-CPP TEST CODE LINE: 847
+CPP TEST CODE LINE: 843
 
 -----------------------------------------
 
  18. error_validity test.
 CPP TEST CODE FILE: F:\cpp-json-test\src\main.cpp
-CPP TEST CODE LINE: 922
+CPP TEST CODE LINE: 918
 
 [[[[[[[[[[[[[[ null ]]]]]]]]]]]]]]] is invalid but  deserialize passed.
 

@@ -11,64 +11,6 @@
 #include <filesystem>
 
 
-/////////////////////////////////////////////////////////////////
-//// 使用boost的process模块，监控进程的内存占用
-//// 可以在CMakeLists.txt中注释掉此宏，然后就可以不用下载boost-process
-//// 如果不使用，记得修改CMake配置之后，vcpkg删除端口boost-process
-#ifdef PROJECT_USE_BOOST_PROCESS
-
-#include <boost/process.hpp>
-#include <boost/asio.hpp>
-
-size_t memory_str_to_size_t(std::string str){
-    size_t res = 0;
-    for(const char& it : str){
-        if(std::isdigit(it)) res = res * 10 + (it - '0');
-    }
-    if(res==0) return -1;
-    else return res;
-}
-
-
-size_t get_memory_usage_KB() {
-    std::string memoryUsage;
-    boost::process::ipstream is;
-
-#ifdef _WIN32
-
-    boost::process::child c("tasklist /FI \"PID eq " + std::to_string(boost::this_process::get_id()) + "\"", boost::process::std_out > is);
-
-    std::string line;
-    while (std::getline(is, line)) {
-        if (!line.empty()){
-            for(int it = line.size()-1; it>=0; --it){
-                if(std::isspace(line[it])) continue;
-                else if(line[it] == 'K' || line[it] == 'k'){
-                    it -= 10;
-                    if(it >= 0 ){
-                        memoryUsage = line.substr(it,9);
-                    }
-                    break;
-                }
-                else break;
-            }
-        } 
-    }
-    c.wait();
-#else
-
-    boost::process::child c("ps -o rss= -p " + std::to_string(boost::this_process::get_id()), boost::process::std_out > is);
-
-    std::getline(is, memoryUsage);
-    c.wait();
-#endif
-
-    return memory_str_to_size_t(memoryUsage);
-}
-
-#endif
-/////////////////////////////////////////////////////////////////
-
 // 统计分数用的对象
 class TestScore{
 public:
@@ -180,4 +122,51 @@ bool isEqual(double a, double b, double epsilon = 1.2e-16) {
     if(std::max(std::abs(a), std::abs(b)) < std::numeric_limits<double>::min()*1e20) return true;
     return std::abs(a - b) / std::max(std::abs(a), std::abs(b)) < epsilon;
 }
+
+
+
+/////////////////////////////////////////////////////////////////
+#ifdef _WIN32
+#include <windows.h>
+#include <psapi.h>
+
+size_t get_memory_usage_KB() {
+    PROCESS_MEMORY_COUNTERS pmc;
+    if (GetProcessMemoryInfo(GetCurrentProcess(), &pmc, sizeof(pmc))) {
+        return pmc.WorkingSetSize / 1024; // 返回 KB
+    }
+    return -1; // 失败
+}
+#endif
+
+#if defined(__linux__) || defined(__APPLE__)
+#include <unistd.h>
+
+size_t get_memory_usage_KB() {
+#ifdef __linux__
+    // Linux 通过 /proc/self/status
+    std::ifstream status("/proc/self/status");
+    std::string line;
+    while (std::getline(status, line)) {
+        if (line.find("VmRSS:") == 0) { // 常驻内存
+            size_t kb = 0;
+            sscanf(line.c_str(), "VmRSS: %zu kB", &kb);
+            return kb;
+        }
+    }
+#elif defined(__APPLE__)
+    // macOS 通过 sysctl
+    pid_t pid = getpid();
+    int mib[4] = {CTL_KERN, KERN_PROC, KERN_PROC_PID, pid};
+    struct kinfo_proc info;
+    size_t len = sizeof(info);
+    if (sysctl(mib, 4, &info, &len, NULL, 0) == 0) {
+        return info.kp_proc.p_vm_rssize; // 返回 KB
+    }
+#endif
+    return -1; // 失败
+}
+#endif
+
+/////////////////////////////////////////////////////////////////
 
