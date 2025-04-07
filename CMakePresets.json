@@ -20,6 +20,7 @@
             "cacheVariables": {
                 "CMAKE_TOOLCHAIN_FILE": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake",
                 "VCPKG_MANIFEST_MODE": "ON",
+                "VCPKG_OVERLAY_PORTS": "${sourceDir}/custom-overlay",
                 "CMAKE_CONFIGURATION_TYPES": "Debug;Release",
                 "CMAKE_CXX_COMPILER": "cl.exe",
                 "CMAKE_C_COMPILER": "cl.exe"
@@ -41,6 +42,7 @@
             "cacheVariables": {
                 "CMAKE_TOOLCHAIN_FILE": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake",
                 "VCPKG_MANIFEST_MODE": "ON",
+                "VCPKG_OVERLAY_PORTS": "${sourceDir}/custom-overlay",
                 "CMAKE_CONFIGURATION_TYPES": "Debug;Release"
             },
             "condition": {
@@ -56,6 +58,7 @@
             "cacheVariables": {
                 "CMAKE_TOOLCHAIN_FILE": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake",
                 "VCPKG_MANIFEST_MODE": "ON",
+                "VCPKG_OVERLAY_PORTS": "${sourceDir}/custom-overlay",
                 "CMAKE_CONFIGURATION_TYPES": "Debug;Release"
             },
             "condition": {

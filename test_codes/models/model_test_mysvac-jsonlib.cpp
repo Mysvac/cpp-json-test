@@ -76,7 +76,7 @@ static void get_element_num(const Jsonlib::JsonValue& json, JsonCounter& counter
     case Jsonlib::JsonType::NUMBER:
         counter.numberNum += 1;
         break;
-    case Jsonlib::JsonType::BOOLEN:
+    case Jsonlib::JsonType::BOOL:
         counter.boolenNum += 1;
         break;
     case Jsonlib::JsonType::ISNULL:
