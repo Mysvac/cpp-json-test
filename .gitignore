@@ -10,6 +10,7 @@ result/images*/
 
 result/result.csv
 result/*.txt
+result/reports/
 
 CMakeUserPresets.json
 CMakeLists.txt.user

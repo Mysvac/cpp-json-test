@@ -1,9 +1,6 @@
 {
   "dependencies": [
-    "boost-json",
-    "jsoncpp",
     "nlohmann-json",
-    "rapidjson",
     "mysvac-jsonlib"
   ]
 }
