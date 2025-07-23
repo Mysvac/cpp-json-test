@@ -16,22 +16,16 @@ int main() {
     /////// 文件资源读取
     std::string big_normal;
     std::string big_double;
-    std::string big_nesting;
     std::string big_varies;
-    std::string big_test;
-    std::string big_object;
-    std::string big_array;
+    std::string big_string;
     std::string path = PROJECT_RESULT_PATH "/reports";
     std::filesystem::create_directories(path);
     std::cout << "Reading the test JSON files..." << std::endl;
     try{
         big_normal  = jtu::read_file( PROJECT_JSONFILE_PATH "/big_normal.json");
         big_double  = jtu::read_file( PROJECT_JSONFILE_PATH "/big_double.json");
-        big_nesting = jtu::read_file( PROJECT_JSONFILE_PATH "/big_nesting.json");
         big_varies  = jtu::read_file( PROJECT_JSONFILE_PATH "/big_varies.json");
-        big_test    = jtu::read_file( PROJECT_JSONFILE_PATH "/big_test.json");
-        big_object  = jtu::read_file( PROJECT_JSONFILE_PATH "/big_object.json");
-        big_array   = jtu::read_file( PROJECT_JSONFILE_PATH "/big_array.json");
+        big_string  = jtu::read_file( PROJECT_JSONFILE_PATH "/big_string.json");
     } catch(...) {
         std::println(std::cerr, "The JSON file used for testing failed to be read. Please check the working directory.\n");
         return 0;
@@ -48,7 +42,7 @@ int main() {
 
         // 基础有效性测试
         jtu::validate(lib_name, test_class, test_score, ofs, big_varies);
-        jtu::speed(lib_name, test_class, test_score, ofs, big_normal, big_double);
+        jtu::speed(lib_name, test_class, test_score, ofs, big_normal, big_double, big_string);
 
 
     }

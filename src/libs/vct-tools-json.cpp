@@ -54,14 +54,14 @@ null_num : 全体元素中，null的数量
 static void get_element_num(const json::Value& json, jtu::JsonCounter& counter){
     switch (json.type()){
         case json::Type::eObject: {
-            for(const auto &val: json.get<json::Object>() | std::views::values){
+            for(const auto &val: json.obj() | std::views::values){
                 get_element_num(val, counter);
                 counter.m_object_size += 1;
             }
             counter.m_object_num += 1;
         } break;
         case json::Type::eArray: {
-        for(const auto& it : json.get<json::Array>()){
+        for(const auto& it : json.arr()){
             get_element_num(it, counter);
             counter.m_array_size += 1;
         }
@@ -106,7 +106,7 @@ class VctToolsJsonTest final : public jtu::TestBase{
         const auto json_ptr = std::make_shared<VctToolsJson>();
         try{
             // 用 JSON子类指针 内部的 JSON数据对象 反序列化字符串
-            auto res = json::deserialize(str);
+            auto res = json::read(str);
             if (!res) throw jtu::FailException {};
             json_ptr->json = std::move(*res);
         }catch(...){
@@ -125,7 +125,7 @@ class VctToolsJsonTest final : public jtu::TestBase{
             // 将输入的 JSON父类指针 转换成 第1步定义的 JSON子类指针
             const auto json_ptr = std::dynamic_pointer_cast<VctToolsJson>(json_base_ptr);
             // 将 JSON子类指针 内部的 JSON数据对象 序列化成字符串，并赋值给 String子类指针 内部的字符串变量
-            str_ptr->str = json_ptr->json.serialize();
+            str_ptr->str = json_ptr->json.dump();
         }catch(...){
             throw jtu::FailException {};
         }
@@ -140,7 +140,7 @@ class VctToolsJsonTest final : public jtu::TestBase{
         const auto str_ptr = std::make_shared<VctToolsString>();
         try{
             const auto json_ptr = std::dynamic_pointer_cast<VctToolsJson>(json_base_ptr);
-            auto res = json_ptr->json.prettify();
+            auto res = json_ptr->json.dumpf();
             if (!res) throw jtu::FailException {};
             str_ptr->str = std::move(*res);
         }catch(...){
@@ -244,7 +244,7 @@ class VctToolsJsonTest final : public jtu::TestBase{
         // 请务必支持。
         try{
             const auto json_ptr = std::dynamic_pointer_cast<VctToolsJson>(json_base_ptr);
-            return json_ptr->json.get<json::Number>();
+            return json_ptr->json.num();
         }catch(...){
             throw jtu::FailException {};
         }
@@ -256,7 +256,7 @@ class VctToolsJsonTest final : public jtu::TestBase{
         // 请务必支持。
         try{
             const auto json_ptr = std::dynamic_pointer_cast<VctToolsJson>(json_base_ptr);
-            return json_ptr->json.get<json::Bool>();
+            return json_ptr->json.bol();
         }catch(...){
             throw jtu::FailException {};
         }
@@ -280,7 +280,7 @@ class VctToolsJsonTest final : public jtu::TestBase{
         // 请务必支持，可以先转const char* 然后转std::string。
         try{
             const auto json_ptr = std::dynamic_pointer_cast<VctToolsJson>(json_base_ptr);
-            return json_ptr->json.get<std::string>();
+            return json_ptr->json.str();
         }catch(...){
             throw jtu::FailException {};
         }

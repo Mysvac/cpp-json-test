@@ -1,6 +1,8 @@
 {
   "dependencies": [
     "nlohmann-json",
+    "jsoncpp",
+    "rapidjson",
     "mysvac-jsonlib"
   ]
 }
