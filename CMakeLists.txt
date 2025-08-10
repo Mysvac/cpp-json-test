@@ -1,5 +1,9 @@
 cmake_minimum_required(VERSION 4.0.0)
 
+set(CMAKE_CXX_STANDARD 23)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_MODULE_STD ON)
+
 project(cpp-json-test
     VERSION 0.2.0                                     # Semantic versioning (MAJOR.MINOR.PATCH)
     HOMEPAGE_URL "https://github.com/Mysvac/cpp-json-test"
@@ -7,13 +11,10 @@ project(cpp-json-test
     LANGUAGES CXX                                     # C++ only project
 )
 
-set(CMAKE_CXX_STANDARD 23)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_CXX_MODULE_STD ON)
-
 ###################################################
 # 各种JSON库，不需要的可以删除
 # find_package(your_package_name CONFIG REQUIRED)
+find_package(mysvac-jsonlib CONFIG REQUIRED)
 find_package(RapidJSON CONFIG REQUIRED)
 find_package(jsoncpp CONFIG REQUIRED)
 find_package(nlohmann_json CONFIG REQUIRED)
@@ -33,14 +34,14 @@ target_sources(main PUBLIC
         FILES ${cxx_module_files}                     # List of module files to include
 )
 target_include_directories(main PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include) # Include directory for headers
+target_compile_definitions(main PRIVATE PROJECT_RESULT_PATH="${CMAKE_CURRENT_SOURCE_DIR}/result")
+target_compile_definitions(main PRIVATE PROJECT_JSONFILE_PATH="${CMAKE_CURRENT_SOURCE_DIR}/json_files")
 # Test benchmark library
 target_link_libraries(main PRIVATE vct::tools-json) # Link the vct-tools-json library
 
-target_compile_definitions(main PRIVATE PROJECT_RESULT_PATH="${CMAKE_CURRENT_SOURCE_DIR}/result")
-target_compile_definitions(main PRIVATE PROJECT_JSONFILE_PATH="${CMAKE_CURRENT_SOURCE_DIR}/json_files")
-
 ###################################################
 # target_link_libraries(main PRIVATE your_lib_name)
+target_link_mysvac_jsonlib(main PRIVATE)
 target_link_libraries(main PRIVATE rapidjson)
 target_link_libraries(main PRIVATE JsonCpp::JsonCpp)
 target_link_libraries(main PRIVATE nlohmann_json::nlohmann_json)

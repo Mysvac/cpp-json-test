@@ -1,32 +1,31 @@
 #include <test_macros.hpp>
 //------- 导入头文件 ---------
-#include "rapidjson/document.h"
-#include "rapidjson/writer.h"
-#include "rapidjson/stringbuffer.h"
-#include "rapidjson/prettywriter.h"
+
 //--------------------------
 import std;
 import jtu;
 //------ 导入模块文件---------
-
+import mysvac.json;
 //--------------------------
+using namespace mysvac;
 
 /* ----------------------------- 0 ----------------------------- */
 
-namespace RapidJsonTestNamespace {
+namespace MysvacJsonTestNamespace {
+
     /* ----------------------------- 1 ----------------------------- */
     //////////////////////////////////////////////////////////////////
     /////// 重写2个类型
 
     //// 1.1. 重写JsonBase类，内部存放你的库的，JSON类型。类名任意。
-    class RapidJsonObj final : public jtu::JsonBase{
+    class MysvacJson final : public jtu::JsonBase{
     public:
         // 存放你的库中，操作JSON需要使用的类对象
-        rapidjson::Document json;
+        Json json;
     };
 
     //// 1.2. 重写StringBase类，内部存放你的库的字符串类。如果支持std::string,就直接使用std::string.
-    class RapidJsonStr final : public jtu::StringBase{
+    class MysvacStr final : public jtu::StringBase{
     public:
         // 存放你库 最常用的 字符串类型
         std::string str;
@@ -58,35 +57,33 @@ namespace RapidJsonTestNamespace {
     null_num : 全体元素中，null的数量
     */
     // 例：
-    static void get_element_num(const rapidjson::Value& json, jtu::JsonCounter& counter){
-        switch (json.GetType()){
-            case rapidjson::Type::kObjectType: {
-                for(const auto& member : json.GetObject()){
-                    get_element_num(member.value, counter);
+    static void get_element_num(const Json& json, jtu::JsonCounter& counter){
+        switch (json.type()){
+            case json::Type::eObj: {
+                for(const auto &val: json.obj() | std::views::values){
+                    get_element_num(val, counter);
                     counter.m_object_size += 1;
                 }
                 counter.m_object_num += 1;
             } break;
-            case rapidjson::Type::kArrayType: {
-                for(const auto& item : json.GetArray()){
-                    get_element_num(item, counter);
+            case json::Type::eArr: {
+                for(const auto& it : json.arr()){
+                    get_element_num(it, counter);
                     counter.m_array_size += 1;
                 }
                 counter.m_array_num += 1;
             } break;
-            case rapidjson::Type::kStringType:
+            case json::Type::eStr:
                 counter.m_string_num += 1;
                 break;
-            case rapidjson::Type::kNumberType:
+            case json::Type::eNum:
                 counter.m_number_num += 1;
                 break;
-            case rapidjson::Type::kTrueType:
-                counter.m_true_num += 1;
+            case json::Type::eBol:
+                if(json.bol()) counter.m_true_num += 1;
+                else  counter.m_false_num += 1;
                 break;
-            case rapidjson::Type::kFalseType:
-                counter.m_false_num += 1;
-                break;
-            case rapidjson::Type::kNullType:
+            case json::Type::eNul:
                 counter.m_null_num += 1;
                 break;
         }
@@ -110,16 +107,18 @@ namespace RapidJsonTestNamespace {
     */
 
 
-    class RapidjsonLibTest final : public jtu::TestBase{
+    class MysvacJsonTest final : public jtu::TestBase{
 
 
         // 1. 重写 反序列化函数   样例如下
         std::shared_ptr<jtu::JsonBase> deserialize(const std::string & str) override{
             // 定义 第1步 定义的 JSON子类指针
-            const auto json_ptr = std::make_shared<RapidJsonObj>();
+            const auto json_ptr = std::make_shared<MysvacJson>();
             try{
-                if(json_ptr->json.Parse(str.c_str()).HasParseError()) throw jtu::FailException { "HasParseError" };
-
+                // 用 JSON子类指针 内部的 JSON数据对象 反序列化字符串
+                auto res =  Json::parse(str);
+                if (!res) throw std::runtime_error("");
+                json_ptr->json = std::move(*res);
             }catch(...){
                 // 转换失败时，务必抛出 FailException异常
                 throw jtu::FailException {};
@@ -131,14 +130,12 @@ namespace RapidJsonTestNamespace {
         // 2. 重写 序列化函数
         std::shared_ptr<jtu::StringBase> serialize(std::shared_ptr<jtu::JsonBase> json_base_ptr) override{
             // 定义 第1步 定义的 String子类指针
-            const auto str_ptr = std::make_shared<RapidJsonStr>();
+            const auto str_ptr = std::make_shared<MysvacStr>();
             try{
                 // 将输入的 JSON父类指针 转换成 第1步定义的 JSON子类指针
-                const auto json_ptr = std::dynamic_pointer_cast<RapidJsonObj>(json_base_ptr);
-                rapidjson::StringBuffer buffer;
-                rapidjson::Writer writer(buffer);
-                json_ptr->json.Accept(writer);
-                str_ptr->str = std::string { buffer.GetString() };
+                const auto json_ptr = std::dynamic_pointer_cast<MysvacJson>(json_base_ptr);
+                // 将 JSON子类指针 内部的 JSON数据对象 序列化成字符串，并赋值给 String子类指针 内部的字符串变量
+                str_ptr->str = json_ptr->json.dump();
             }catch(...){
                 throw jtu::FailException {};
             }
@@ -150,13 +147,10 @@ namespace RapidJsonTestNamespace {
         std::shared_ptr<jtu::StringBase> serialize_pretty(std::shared_ptr<jtu::JsonBase> json_base_ptr) override{
             // 如果不支持美化（带缩进和换行的序列化），请直接抛出 NotSupportException 异常。
             // throw NotSupportException {};
-            const auto str_ptr = std::make_shared<RapidJsonStr>();
+            const auto str_ptr = std::make_shared<MysvacStr>();
             try{
-                const auto json_ptr = std::dynamic_pointer_cast<RapidJsonObj>(json_base_ptr);
-                rapidjson::StringBuffer buffer;
-                rapidjson::PrettyWriter prettyWriter(buffer);
-                json_ptr->json.Accept(prettyWriter);
-                str_ptr->str = std::string { buffer.GetString() };
+                const auto json_ptr = std::dynamic_pointer_cast<MysvacJson>(json_base_ptr);
+                str_ptr->str = json_ptr->json.dumpf();
             }catch(...){
                 throw jtu::FailException {};
             }
@@ -169,7 +163,7 @@ namespace RapidJsonTestNamespace {
             // 第2步有解释，一个简单的存数值类型，用于记录内部各种元素的数量
             jtu::JsonCounter counter;
             try{
-                const auto json_ptr = std::dynamic_pointer_cast<RapidJsonObj>(json_base_ptr);
+                const auto json_ptr = std::dynamic_pointer_cast<MysvacJson>(json_base_ptr);
                 //（使用第2步中定义的函数，统计内部元素数量。）
                 get_element_num(json_ptr->json, counter);
             }catch(...){
@@ -183,12 +177,9 @@ namespace RapidJsonTestNamespace {
         void add_child_to_object(std::shared_ptr<jtu::JsonBase> json_base_ptr, const std::string& key, std::shared_ptr<jtu::JsonBase> value) override{
             // 如果不支持添加内容，请直接抛出 NotSupportException 异常。
             try{
-                const auto json_ptr = std::dynamic_pointer_cast<RapidJsonObj>(json_base_ptr);
-                const auto value_ptr = std::dynamic_pointer_cast<RapidJsonObj>(value);
-                if (!json_ptr->json.IsObject()) throw jtu::FailException {};
-                rapidjson::Document document;
-                document.CopyFrom(value_ptr->json, document.GetAllocator());
-                json_ptr->json.AddMember(rapidjson::StringRef(key.c_str()), document, json_ptr->json.GetAllocator());
+                const auto json_ptr = std::dynamic_pointer_cast<MysvacJson>(json_base_ptr);
+                const auto value_ptr = std::dynamic_pointer_cast<MysvacJson>(value);
+                json_ptr->json[key] = value_ptr->json;
             }catch(...){
                 throw jtu::FailException {};
             }
@@ -198,39 +189,9 @@ namespace RapidJsonTestNamespace {
         void add_child_to_array(std::shared_ptr<jtu::JsonBase> json_base_ptr, const std::size_t& index,  std::shared_ptr<jtu::JsonBase> value) override{
             // 如果不支持添加内容，请直接抛出 NotSupportException 异常。
             try{
-                const auto json_ptr = std::dynamic_pointer_cast<RapidJsonObj>(json_base_ptr);
-                const auto value_ptr = std::dynamic_pointer_cast<RapidJsonObj>(value);
-                if (!json_ptr->json.IsArray()) throw jtu::FailException {};
-
-                std::size_t len = json_ptr->json.Size();
-                if(index > len) throw jtu::FailException {};
-
-                rapidjson::Document::AllocatorType& allocator = json_ptr->json.GetAllocator();
-
-                // 复制要插入的值
-                rapidjson::Value copied_value;
-                copied_value.CopyFrom(value_ptr->json, allocator);
-                if (index == len) {
-                    // 直接尾部添加
-                    json_ptr->json.PushBack(copied_value, allocator);
-                } else {
-                    // 先弹出尾部元素暂存
-                    std::vector<rapidjson::Value> temp_values;
-                    for (std::size_t i = len; i > index; --i) {
-                        rapidjson::Value val;
-                        val = std::move(json_ptr->json[len - 1]); // 取最后一个元素
-                        json_ptr->json.PopBack();
-                        temp_values.push_back(std::move(val));
-                    }
-
-                    // 插入新元素
-                    json_ptr->json.PushBack(copied_value, allocator);
-
-                    // 把临时元素放回去，顺序需要反转回原顺序
-                    for (auto it = temp_values.rbegin(); it != temp_values.rend(); ++it) {
-                        json_ptr->json.PushBack(*it, allocator);
-                    }
-                }
+                const auto json_ptr = std::dynamic_pointer_cast<MysvacJson>(json_base_ptr);
+                const auto value_ptr = std::dynamic_pointer_cast<MysvacJson>(value);
+                json_ptr->json.insert(index, value_ptr->json);
             }catch(...){
                 throw jtu::FailException {};
             }
@@ -240,9 +201,8 @@ namespace RapidJsonTestNamespace {
         void delete_child_from_object(std::shared_ptr<jtu::JsonBase> json_base_ptr, const std::string& key) override{
             // 如果不支持添加内容，请直接抛出 NotSupportException 异常。
             try{
-                const auto json_ptr = std::dynamic_pointer_cast<RapidJsonObj>(json_base_ptr);
-                if (!json_ptr->json.IsObject()) throw jtu::FailException {};
-                json_ptr->json.RemoveMember(key.c_str());
+                const auto json_ptr = std::dynamic_pointer_cast<MysvacJson>(json_base_ptr);
+                json_ptr->json.erase(key);
             }catch(...){
                 throw jtu::FailException {};
             }
@@ -252,10 +212,8 @@ namespace RapidJsonTestNamespace {
         void delete_child_from_array(std::shared_ptr<jtu::JsonBase> json_base_ptr, const std::size_t& index) override{
             // 如果不支持添加内容，请直接抛出 NotSupportException 异常。
             try{
-                const auto json_ptr = std::dynamic_pointer_cast<RapidJsonObj>(json_base_ptr);
-                if (!json_ptr->json.IsArray()) throw jtu::FailException {};
-                if (index >= json_ptr->json.Size()) throw jtu::FailException {};
-                json_ptr->json.Erase(json_ptr->json.Begin() + index);
+                const auto json_ptr = std::dynamic_pointer_cast<MysvacJson>(json_base_ptr);
+                json_ptr->json.erase(index);
             }catch(...){
                 throw jtu::FailException {};
             }
@@ -264,13 +222,10 @@ namespace RapidJsonTestNamespace {
         // 9. 获取Object子元素的方法，请使用拷贝而非移动
         std::shared_ptr<jtu::JsonBase> get_child_from_object(std::shared_ptr<jtu::JsonBase> json_base_ptr, const std::string & str) override{
             // 如果不支持添加内容，请直接抛出 NotSupportException 异常。
-            const auto json_ptr = std::make_shared<RapidJsonObj>();
+            const auto json_ptr = std::make_shared<MysvacJson>();
             try{
-                const auto old_ptr = std::dynamic_pointer_cast<RapidJsonObj>(json_base_ptr);
-                if (!old_ptr->json.IsObject()) throw jtu::FailException {};
-                const rapidjson::Value::ConstMemberIterator itr = old_ptr->json.FindMember(str.c_str());
-                if (itr == old_ptr->json.MemberEnd()) throw jtu::FailException {};
-                json_ptr->json.CopyFrom(itr->value, json_ptr->json.GetAllocator());
+                const auto old_ptr = std::dynamic_pointer_cast<MysvacJson>(json_base_ptr);
+                json_ptr->json = old_ptr->json.at(str);
                 return std::static_pointer_cast<jtu::JsonBase>(json_ptr);
             }catch(...){
                 throw jtu::FailException {};
@@ -281,12 +236,10 @@ namespace RapidJsonTestNamespace {
         // 10. 获取Array子元素的方法，请使用拷贝而非移动
         std::shared_ptr<jtu::JsonBase> get_child_from_array(std::shared_ptr<jtu::JsonBase> json_base_ptr, const std::size_t& index) override{
             // 如果不支持添加内容，请直接抛出 NotSupportException 异常。
-            const auto json_ptr = std::make_shared<RapidJsonObj>();
+            const auto json_ptr = std::make_shared<MysvacJson>();
             try{
-                const auto old_ptr = std::dynamic_pointer_cast<RapidJsonObj>(json_base_ptr);
-                if (!old_ptr->json.IsArray()) throw jtu::FailException {};
-                if (index >= old_ptr->json.Size()) throw jtu::FailException {};
-                json_ptr->json.CopyFrom(old_ptr->json[index], json_ptr->json.GetAllocator());
+                const auto old_ptr = std::dynamic_pointer_cast<MysvacJson>(json_base_ptr);
+                json_ptr->json = old_ptr->json.at(index);
                 return std::static_pointer_cast<jtu::JsonBase>(json_ptr);
             }catch(...){
                 throw jtu::FailException {};
@@ -298,9 +251,8 @@ namespace RapidJsonTestNamespace {
         double get_value_as_double(std::shared_ptr<jtu::JsonBase> json_base_ptr) override{
             // 请务必支持。
             try{
-                const auto json_ptr = std::dynamic_pointer_cast<RapidJsonObj>(json_base_ptr);
-                if(!json_ptr->json.IsNumber()) throw jtu::FailException {};
-                return json_ptr->json.GetDouble();
+                const auto json_ptr = std::dynamic_pointer_cast<MysvacJson>(json_base_ptr);
+                return json_ptr->json.num();
             }catch(...){
                 throw jtu::FailException {};
             }
@@ -311,9 +263,8 @@ namespace RapidJsonTestNamespace {
         bool get_value_as_bool(std::shared_ptr<jtu::JsonBase> json_base_ptr) override{
             // 请务必支持。
             try{
-                const auto json_ptr = std::dynamic_pointer_cast<RapidJsonObj>(json_base_ptr);
-                if(!json_ptr->json.IsBool()) throw jtu::FailException {};
-                return json_ptr->json.GetBool();
+                const auto json_ptr = std::dynamic_pointer_cast<MysvacJson>(json_base_ptr);
+                return json_ptr->json.bol();
             }catch(...){
                 throw jtu::FailException {};
             }
@@ -324,9 +275,8 @@ namespace RapidJsonTestNamespace {
         long long get_value_as_int64(std::shared_ptr<jtu::JsonBase> json_base_ptr) override{
             // 请务必支持。
             try{
-                const auto json_ptr = std::dynamic_pointer_cast<RapidJsonObj>(json_base_ptr);
-                if(!json_ptr->json.IsInt64()) throw jtu::FailException {};
-                return json_ptr->json.GetInt64();
+                const auto json_ptr = std::dynamic_pointer_cast<MysvacJson>(json_base_ptr);
+                return json_ptr->json.to<long long>();
             }catch(...){
                 throw jtu::FailException {};
             }
@@ -337,9 +287,8 @@ namespace RapidJsonTestNamespace {
         std::string get_value_as_string(std::shared_ptr<jtu::JsonBase> json_base_ptr) override{
             // 请务必支持，可以先转const char* 然后转std::string。
             try{
-                const auto json_ptr = std::dynamic_pointer_cast<RapidJsonObj>(json_base_ptr);
-                if(!json_ptr->json.IsString()) throw jtu::FailException {};
-                return std::string{ json_ptr->json.GetString(), json_ptr->json.GetStringLength() };
+                const auto json_ptr = std::dynamic_pointer_cast<MysvacJson>(json_base_ptr);
+                return json_ptr->json.str();
             }catch(...){
                 throw jtu::FailException {};
             }
@@ -349,8 +298,8 @@ namespace RapidJsonTestNamespace {
         // 15. 值类型，判断内部是否是null值。如果是null请返回null，如果不是请抛出异常或返回false
         bool value_is_null(std::shared_ptr<jtu::JsonBase> json_base_ptr) override{
             try{
-                const auto json_ptr = std::dynamic_pointer_cast<RapidJsonObj>(json_base_ptr);
-                return json_ptr->json.IsNull();
+                const auto json_ptr = std::dynamic_pointer_cast<MysvacJson>(json_base_ptr);
+                return json_ptr->json.is_nul();
             }catch(...){
                 throw jtu::FailException {};
             }
@@ -367,9 +316,9 @@ namespace RapidJsonTestNamespace {
     //////// 使用下面这个宏，注册你的测试类对象
 
     // 参数1：你库的名字，随便写   参数2: 你的测试子类名，是第3步中的类名，不能加双引号
-    M_REGISTER_CLASS("RapidJson", RapidjsonLibTest)
+    M_REGISTER_CLASS("mysvac-json", MysvacJsonTest)
 
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
-} // namespace RapidJsonTestNamespace
+}   // namespace MysvacJsonTestNamespace

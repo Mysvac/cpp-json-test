@@ -21,11 +21,11 @@ export namespace jtu {
         // 1-1. big_normal.json 反序列化测试 各类数据均衡的文件
         try{
             std::cout << lib_name << " >> deserialize (1) testing......"  << std::flush;
-            const auto begin = std::chrono::system_clock::now();
+            const auto begin = std::chrono::steady_clock::now();
 
             json_ptr_1 =  test_class->deserialize(big_normal);
 
-            const auto end = std::chrono::system_clock::now();
+            const auto end = std::chrono::steady_clock::now();
             const auto micros = std::chrono::duration_cast<std::chrono::microseconds>(end-begin);
             test_score.deserialize_1 = micros.count();
             std::cout << '\r' << lib_name << " >> deserialize (1) passed: " << micros.count()/1000ll << "." << micros.count()%1000ll  << " ms" << std::string(10, ' ')<< std::endl;
@@ -52,11 +52,11 @@ export namespace jtu {
         // 1-2. big_doubles.json 反序列化测试 包含大量数值类型的文件
         try{
             std::cout << lib_name << " >> deserialize (2) testing......"  << std::flush;
-            const auto begin = std::chrono::system_clock::now();
+            const auto begin = std::chrono::steady_clock::now();
 
             json_ptr_2 =  test_class->deserialize(big_double);
 
-            const auto end = std::chrono::system_clock::now();
+            const auto end = std::chrono::steady_clock::now();
             const auto micros = std::chrono::duration_cast<std::chrono::microseconds>(end-begin);
             test_score.deserialize_2 = micros.count();
             std::cout << '\r' << lib_name << " >> deserialize (2) passed: " << micros.count()/1000ll << "." << micros.count()%1000ll  << " ms" << std::string(10, ' ')<< std::endl;
@@ -83,11 +83,11 @@ export namespace jtu {
         // 1-3. big_string.json 反序列化测试 包含大量字符串类型的文件
         try{
             std::cout << lib_name << " >> deserialize (3) testing......"  << std::flush;
-            const auto begin = std::chrono::system_clock::now();
+            const auto begin = std::chrono::steady_clock::now();
 
             json_ptr_3 =  test_class->deserialize(big_string);
 
-            const auto end = std::chrono::system_clock::now();
+            const auto end = std::chrono::steady_clock::now();
             const auto micros = std::chrono::duration_cast<std::chrono::microseconds>(end-begin);
             test_score.deserialize_3 = micros.count();
             std::cout << '\r' << lib_name << " >> deserialize (3) passed: " << micros.count()/1000ll << "." << micros.count()%1000ll  << " ms" << std::string(10, ' ')<< std::endl;
@@ -114,11 +114,11 @@ export namespace jtu {
         // 2-1. big_normal.json 序列化测试 各类数据均衡的文件
         try{
             std::cout << lib_name << " >> serialize (1) testing......"  << std::flush;
-            const auto begin = std::chrono::system_clock::now();
+            const auto begin = std::chrono::steady_clock::now();
             if(json_ptr_1 == nullptr) throw FailException{};
             const auto tmp =  test_class->serialize(json_ptr_1);
 
-            const auto end = std::chrono::system_clock::now();
+            const auto end = std::chrono::steady_clock::now();
             const auto micros = std::chrono::duration_cast<std::chrono::microseconds>(end-begin);
             std::string s = tmp->get_string();
             s[1] = '1'; // 测试内容是否正常
@@ -147,11 +147,11 @@ export namespace jtu {
         // 2-2. big_doubles.json 序列化测试 包含大量数值类型的文件
         try{
             std::cout << lib_name << " >> serialize (2) testing......"  << std::flush;
-            const auto begin = std::chrono::system_clock::now();
+            const auto begin = std::chrono::steady_clock::now();
             if(json_ptr_2 == nullptr) throw FailException{};
             const auto tmp =  test_class->serialize(json_ptr_2);
 
-            const auto end = std::chrono::system_clock::now();
+            const auto end = std::chrono::steady_clock::now();
             const auto micros = std::chrono::duration_cast<std::chrono::microseconds>(end-begin);
             std::string s = tmp->get_string();
             s[1] = '1'; // 测试内容是否正常
@@ -180,11 +180,11 @@ export namespace jtu {
         // 2-3. big_string.json 序列化测试 包含大量字符串的文件
         try{
             std::cout << lib_name << " >> serialize (3) testing......"  << std::flush;
-            const auto begin = std::chrono::system_clock::now();
+            const auto begin = std::chrono::steady_clock::now();
             if(json_ptr_3 == nullptr) throw FailException{};
             const auto tmp =  test_class->serialize(json_ptr_3);
 
-            const auto end = std::chrono::system_clock::now();
+            const auto end = std::chrono::steady_clock::now();
             const auto micros = std::chrono::duration_cast<std::chrono::microseconds>(end-begin);
             std::string s = tmp->get_string();
             s[1] = '1'; // 测试内容是否正常
@@ -213,11 +213,11 @@ export namespace jtu {
         // 3-1. big_normal.json 序列化+美化测试 类型均匀的文件
         try{
             std::cout << lib_name << " >> serialize_pretty (1) testing......"  << std::flush;
-            const auto begin = std::chrono::system_clock::now();
+            const auto begin = std::chrono::steady_clock::now();
             if(json_ptr_1 == nullptr) throw FailException{};
             const auto tmp =  test_class->serialize_pretty(json_ptr_1);
 
-            const auto end = std::chrono::system_clock::now();
+            const auto end = std::chrono::steady_clock::now();
             const auto micros = std::chrono::duration_cast<std::chrono::microseconds>(end-begin);
             test_score.prettify_1 = micros.count();
             std::cout << '\r' << lib_name << " >> serialize_pretty (1) passed: " << micros.count()/1000ll << "." << micros.count()%1000ll  << " ms" << std::string(10, ' ')<< std::endl;
@@ -244,11 +244,11 @@ export namespace jtu {
         // 3-2 big_doubles.json 序列化+美化测试 包含大量数值类型的文件
         try{
             std::cout << lib_name << " >> serialize_pretty (2) testing......"  << std::flush;
-            const auto begin = std::chrono::system_clock::now();
+            const auto begin = std::chrono::steady_clock::now();
             if(json_ptr_2 == nullptr) throw FailException{};
             const auto tmp =  test_class->serialize_pretty(json_ptr_2);
 
-            const auto end = std::chrono::system_clock::now();
+            const auto end = std::chrono::steady_clock::now();
             const auto micros = std::chrono::duration_cast<std::chrono::microseconds>(end-begin);
             test_score.prettify_2 = micros.count();
             std::cout << '\r' << lib_name << " >> serialize_pretty (2) passed: " << micros.count()/1000ll << "." << micros.count()%1000ll  << " ms" << std::string(10, ' ')<< std::endl;
@@ -275,14 +275,14 @@ export namespace jtu {
         // 3-3 big_string.json 序列化+美化测试 包含大量字符串的文件
         try{
             std::cout << lib_name << " >> serialize_pretty (3) testing......"  << std::flush;
-            const auto begin = std::chrono::system_clock::now();
+            const auto begin = std::chrono::steady_clock::now();
             if(json_ptr_3 == nullptr) throw FailException{};
             const auto tmp =  test_class->serialize_pretty(json_ptr_3);
 
-            std::ofstream ofs { PROJECT_RESULT_PATH "/" + lib_name + "_str.json"  };
-            ofs.write(tmp->get_string().c_str(), tmp->get_string().size());
+            // std::ofstream ofs { PROJECT_RESULT_PATH "/" + lib_name + "_str.json"  };
+            // ofs.write(tmp->get_string().c_str(), tmp->get_string().size());
 
-            const auto end = std::chrono::system_clock::now();
+            const auto end = std::chrono::steady_clock::now();
             const auto micros = std::chrono::duration_cast<std::chrono::microseconds>(end-begin);
             test_score.prettify_3 = micros.count();
             std::cout << '\r' << lib_name << " >> serialize_pretty (3) passed: " << micros.count()/1000ll << "." << micros.count()%1000ll  << " ms" << std::string(10, ' ')<< std::endl;

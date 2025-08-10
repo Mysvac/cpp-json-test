@@ -5,12 +5,9 @@
 build/
 vcpkg_installed/
 
-result/images/
-result/images*/
 
+result/charts_zh/
+result/charts/
 result/result.csv
-result/*.txt
-result/reports/
 
 CMakeUserPresets.json
-CMakeLists.txt.user

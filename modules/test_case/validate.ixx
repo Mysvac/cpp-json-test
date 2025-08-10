@@ -24,7 +24,8 @@ export namespace jtu {
         std::shared_ptr<TestBase> test_class,
         TestScore& test_score,
         std::ofstream& ofs,
-        const std::string& text
+        const std::string& text,
+        const bool test_memory = true
     ) noexcept {
         std::cout << "[ Begin of test lib: " << lib_name << " ]" << std::endl;
         std::size_t base_memory_KB;
@@ -133,13 +134,19 @@ export namespace jtu {
                 std::cerr << '\r' << lib_name << " >> JSON value type failed." << std::string(20, ' ') << std::endl;
             }
 
+            if (test_memory) {
+                std::this_thread::sleep_for(std::chrono::seconds(1));
+                base_memory_KB = get_memory_usage_KB();
+            }
 
-            std::this_thread::sleep_for(std::chrono::seconds(1));
-            base_memory_KB = get_memory_usage_KB();
         }
-        std::this_thread::sleep_for(std::chrono::seconds(1));
-        test_score.memory = base_memory_KB - get_memory_usage_KB();
-        std::cout << lib_name << " >> memory used:" << test_score.memory << " K" << std::string(15, ' ') << std::endl;
+
+        if (test_memory) {
+            std::this_thread::sleep_for(std::chrono::seconds(1));
+            test_score.memory = base_memory_KB - get_memory_usage_KB();
+            std::cout << lib_name << " >> memory used:" << test_score.memory << " K" << std::string(15, ' ') << std::endl;
+        }
+
     }
 
 }
