@@ -4,9 +4,7 @@
 
 ## 项目概要
 
-C++23 JSON解析库测试框架。
-
-使用现代C++，保证程序内存安全，跨平台。
+C++23 JSON解析库测试框架，内存安全，跨平台，易用。
 
 提供 **基础有效性验证、序列化测速度、反序列化测试、增删改查测试、内存占用** 等多项测试内容。
 
@@ -21,6 +19,7 @@ C++23 JSON解析库测试框架。
 3. 第三方库管理，默认使用`vcpkg`，可以自行修改`CMakePreset`调整。
 
 ### 如何导入新的库
+
 下面提供3种方式：
 1. 使用vcpkg安装第三方库，推荐清单模式，使用`vcpkg add port 包名`添加。然后在`CMakeLists.txt`中使用`find_package`和`target_link_libraries`即可。
 2. 直接放源码。将头文件放入`include`文件夹，将源文件放入`src`文件夹即可，项目构建/生成时会把这些代码也加入构建/编译生成。
@@ -73,7 +72,7 @@ cmake --build --preset <build-preset-name>
 ## 效果例图
 
 ![内存占用](docs/charts_zh/内存占用测试.png)
-![混合解析](docs/charts_zh/混合琐碎数据序列化耗时.png)
+![混合解析](docs/charts_zh/混合琐碎数据解析耗时.png)
 ![浮点解析](docs/charts_zh/浮点数解析耗时.png)
 ![字符解析](docs/charts_zh/字符串解析耗时.png)
 ![混合序列化](docs/charts_zh/混合琐碎数据序列化耗时.png)
