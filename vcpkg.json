@@ -1,6 +1,5 @@
 {
   "dependencies": [
-    "matplotplusplus",
     "nlohmann-json",
     "jsoncpp",
     "rapidjson",

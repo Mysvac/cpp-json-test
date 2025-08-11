@@ -54,20 +54,22 @@ cmake --build --preset <build-preset-name>
 
 完成上述步骤并运行可执行程序。
 
-测试完成后，各种数据将放在`result/`文件夹下，这里有两大大内容：
+测试完成后，各种数据将放在`result/`文件夹下，这里有三大内容：
 
-1. `result/result.csv`文件，存放着各库各测试项目的具体分数。
+1. `result.csv`文件，存放着各库各测试项目的具体分数。
 2. `get_chart_**.py`Python程序，用于读取`result.csv`并生成图表。
+3. `reports` 文件夹，生成错误报告。
 
 请进入`result/`文件夹，然后执行`python get_chart_zh.py`命令即可。<br>
 图片将生成在`result/charts_zh/`文件夹中。
 
 ### 注意事项
 
-1. 项目中有一个 `vct-tools-json` 库，此库将作为测试基准。
-2. src 中的文件是递归解析的，可以自定义文件夹结构。
-3. 现有测试文件（`src/libs/`中的文件）可以删除，即使全删也能运行程序。
-4. 如果删除了测试文件，记得修改`CMakeLists.txt`和`vcpkg.json`，删除项目的库依赖。
+1. 标准库模块实验性支持，需要自行通过CMake预设设置 `CMAKE_EXPERIMENTAL_CXX_IMPORT_STD` 变量
+2. 项目中有一个 `vct-tools-json` 库，此库将作为测试基准。
+3. src 中的文件是递归解析的，可以自定义文件夹结构。
+4. 现有测试文件（`src/libs/`中的文件）可以删除，即使全删也能运行程序。
+5. 如果删除了测试文件，记得修改`CMakeLists.txt`和`vcpkg.json`，删除项目的库依赖。
 
 ## 效果例图
 

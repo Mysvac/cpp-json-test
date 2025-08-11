@@ -9,5 +9,6 @@ vcpkg_installed/
 result/charts_zh/
 result/charts/
 result/result.csv
+result/reports
 
 CMakeUserPresets.json

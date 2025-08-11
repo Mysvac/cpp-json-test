@@ -65,7 +65,7 @@ if __name__ == "__main__":
     df['Serialize_number_speed_Test'] = df['SerializeNum'].astype(int)
     df = df.drop(columns=['SerializeNum'])
 
-    df['SerializeStr_string_speed_Test'] = df['SerializeStr'].astype(int)
+    df['Serialize_string_speed_Test'] = df['SerializeStr'].astype(int)
     df = df.drop(columns=['SerializeStr'])
 
     df['Pretty_serialize_mixed_speed_Test'] = df['PrettifyAll'].astype(int)
@@ -94,7 +94,7 @@ if __name__ == "__main__":
     get_chart("Deserialize_string_speed_Test", "Desialization time - many string(us)" ,df)
     get_chart("Serialize_mixed_speed_Test", "Serialization time - mixed data(us)",df)
     get_chart("Serialize_number_speed_Test", "Serialization time - many float number(us)",df)
-    get_chart("SerializeStr_string_speed_Test", "Serialization time - many string(us)",df)
+    get_chart("Serialize_string_speed_Test", "Serialization time - many string(us)",df)
     get_chart("Pretty_serialize_mixed_speed_Test", "Pretty serialization time - mixed data(us)",df)
     get_chart("Pretty_serialize_number_speed_Test", "Pretty serialization time - many float number(us)",df)
     get_chart("Pretty_serialize_string_speed_Test", "Pretty serialization time - many string(us)",df)
